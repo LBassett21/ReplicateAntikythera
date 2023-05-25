@@ -17,3 +17,5 @@ class Asteroid:
         print("Asteroid constructor")
 
 p = Planet();
+
+#This is a test of the github bot for discord
