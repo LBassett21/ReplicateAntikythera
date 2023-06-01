@@ -1,5 +1,11 @@
+from cmath import e
 import math
+from re import I
+from tkinter import Label
 from scipy.optimize import newton
+from datetime import *
+
+ref_date = date(2024, 1, 4)
 
 '''
 Kepler's Equation, used in finding true anomaly in tsoToF
@@ -24,24 +30,63 @@ def meanAnomaly(t, T):
     return 2 * math.pi * t / T
 
 '''
-compute true anomaly (f) from time since periapsis (t)
-a: semimajor axis
+a: semimajor axis (in AU)
 e: eccentricity
-i: angle of inclination
-T: orbital period
+i: angle of inclination (in degrees, relative to the orbital plane of the Earth (ecliptic))
+LA: longitude of the ascending node
+w: longitude of perihelion (in degrees relative to the vernal equinox)
+T: orbital period (in years)
+dop: a date of periapsis
 '''
-def tspToF(t, a, e, i, T):
-    if (T <= 0):
-        raise Exception("T cannot be <= 0")
+class Orbit():
+    def __init__(self, a, e, i, La, w, T, dop):
+        self.a = a
+        self.e = e
+        self.i = i
+        self.La = La
+        self.w = w
+        self.T = T
+        self.dop = dop
 
-    # 1: find mean anomaly (M)
-    M = meanAnomaly(t, T)
+    '''
+    Given sim time (t), find time since periapsis
+    '''
+    def getTsp(self, t):
+        curr_date = ref_date + timedelta(days = t * 365)
+        tsp = (curr_date - self.dop).days / 365
 
-    # 2: find eccentric anomaly (E)
-    # here, we have to find the roots of Kepler's Equation
-    E = newton(kepEqn, 0, kepEqnDeriv, (e, M))
+        return tsp
+    
+    '''
+    compute true anomaly (f) from sim time (t)
+    '''
+    def tToF(self, t):
+        T = self.T
+        e = self.e
 
-    # 3: use E to solve for f
-    f = 2 * math.atan(math.tan(E/2) / (math.sqrt((1 - e) / (1 + e))))
+        if (T <= 0):
+            raise Exception("T cannot be <= 0")
 
-    return f
+        tsp = self.getTsp(t)
+
+        # 1: find mean anomaly (M)
+        M = meanAnomaly(tsp, T)
+
+        # 2: find eccentric anomaly (E)
+        # here, we have to find the roots of Kepler's Equation
+        E = newton(kepEqn, 0, kepEqnDeriv, (e, M))
+
+        # 3: use E to solve for f
+        f = 2 * math.atan(math.tan(E/2) / (math.sqrt((1 - e) / (1 + e))))
+
+        return f
+    
+    # Get distance from primary at sim time t
+    def getDistance(self, t):
+        a = self.a
+        e = self.e
+        tsp = self.getTsp(t)
+        f = self.tToF(tsp)
+
+        return a * (1 - math.pow(e, 2)) / (1 + e * math.cos(f))
+
