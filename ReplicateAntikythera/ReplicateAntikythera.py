@@ -7,7 +7,7 @@ from OrbitalDynamics import *
 from scipy.spatial.transform import Rotation
 from datetime import timedelta
 
-# import GUI
+import GUI
 
 '''
 primary: the satellite or planet around which the satellite orbits
@@ -28,12 +28,19 @@ class Satellite:
         f = orbit.tToF(t)
         r = orbit.getDistance(t)
 
-        longitude = f + orbit.La + orbit.w
         pos = [r, 0, 0]
-        rot = Rotation.from_euler('z', longitude, degrees = True)
+
+        rot = Rotation.from_euler('z', -orbit.La, degrees = True)
         pos = rot.apply(pos)
 
-        # !! TODO: Implement rotation of orbital plane !!
+        rot = Rotation.from_euler('x', orbit.i, degrees = True)
+        pos = rot.apply(pos)
+
+        rot = Rotation.from_euler('z', 2 * orbit.La + orbit.w + math.degrees(f), degrees = True)
+        pos = rot.apply(pos)
+
+        if (primary != None):
+            pos += primary.getPos(t)
 
         return pos
 
@@ -52,6 +59,7 @@ class Asteroid:
 
 def main():
     #define orbits
+    # semimajor axis, eccentricity, longitude of ascending node, argument of perihelion, orbital period, date of periapsis
     earth_orbit = Orbit(1, 0.016710, 0, -11.26064, 114.20783, 1, date(2024, 1, 4))
     earth = Planet(earth_orbit)
     print(earth.getPos(0))

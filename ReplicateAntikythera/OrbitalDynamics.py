@@ -77,7 +77,7 @@ class Orbit():
         E = newton(kepEqn, 0, kepEqnDeriv, (e, M))
 
         # 3: use E to solve for f
-        f = 2 * math.atan(math.tan(E/2) / (math.sqrt((1 - e) / (1 + e))))
+        f = -2 * math.atan(math.tan(E/2) / (math.sqrt((1 - e) / (1 + e))))
 
         return f
     
