@@ -22,6 +22,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AngleMath.py" />
+    <Compile Include="OrbitalDynamics.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ReplicateAntikythera.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
