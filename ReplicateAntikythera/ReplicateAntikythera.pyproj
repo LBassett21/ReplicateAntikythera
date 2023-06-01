@@ -22,6 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AngleMath.py" />
+    <Compile Include="2dGUI.py" />
     <Compile Include="OrbitalDynamics.py">
       <SubType>Code</SubType>
     </Compile>
