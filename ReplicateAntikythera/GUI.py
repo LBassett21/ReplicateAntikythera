@@ -2,6 +2,8 @@ import pygame
 import math
 import pygame.font
 
+from ReplicateAntikythera import *
+
 # Initialize Pygame
 pygame.init()
 
@@ -55,6 +57,7 @@ jupiter_speed = 0.008
 jupiter_angle = 0
 jupiter_mass = 2.5
 
+moon_radius = 5
 
 #Define the information for the key
 key_font = pygame.font.SysFont(None, 16) #font for the key
@@ -67,9 +70,20 @@ key_text = {
     "Jupiter": "Purple"
     }
 
+
+#earth_orbit = Orbit(1, 0.016710, 0, -11.26064, 114.20783, 1, date(2024, 1, 4))
+earth_orbit = Orbit(1, 0.2, 0, -11.26064, 114.20783, 1, date(2024, 1, 4))
+earth = Planet(earth_orbit)
+#moon_orbit = Orbit(0.00257, 0.0549, 5.145, 0, 0, 29.530 / 365, ref_date)
+moon_orbit = Orbit(0.2, 0.0549, 5.145, 0, 0, 29.530 / 365, ref_date)
+moon = Moon(moon_orbit, earth)
+
 # Main game loop
 running = True
 clock = pygame.time.Clock()
+
+sim_time = 0
+dt = 0
 
 while running:
     # Process events
@@ -77,13 +91,23 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    # 1 second of real time = 0.25 years of sim time
+    sim_time = (sim_time + (dt / 1000)/4)
+
     # Clear the screen
     screen.fill(BLACK)
 
     # Update planet positions
+    '''
     earth_x = sun_pos[0] + math.cos(earth_angle) * earth_distance
     earth_y = sun_pos[1] + math.sin(earth_angle) * earth_distance
     earth_angle += earth_speed
+    '''
+    earth_x = sun_pos[0] + earth.getPos(sim_time)[0] * 100
+    earth_y = sun_pos[1] + earth.getPos(sim_time)[1] * 100
+
+    moon_x = sun_pos[0] + moon.getPos(sim_time)[0] * 100
+    moon_y = sun_pos[1] + moon.getPos(sim_time)[1] * 100
 
     mars_x = sun_pos[0] + math.cos(mars_angle) * mars_distance
     mars_y = sun_pos[1] + math.sin(mars_angle) * mars_distance
@@ -113,6 +137,8 @@ while running:
     pygame.draw.circle(screen, RED, (int(mars_x), int(mars_y)), mars_radius)
     pygame.draw.circle(screen, GREEN, (int(venus_x), int(venus_y)), venus_radius)
 
+    pygame.draw.circle(screen, WHITE, (int(moon_x), int(moon_y)), moon_radius)
+
     #Draw the key
     key_x =10
     key_y = 10
@@ -124,7 +150,7 @@ while running:
 
     # Update the display
     pygame.display.flip()
-    clock.tick(60)
+    dt = clock.tick(60)
 
 # Quit the game
 pygame.quit()
