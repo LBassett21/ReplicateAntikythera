@@ -124,8 +124,8 @@ while running:
     jupiter_angle += jupiter_speed
 
     #Draw the rotating lines for the planet
-    pygame.draw.line(screen, WHITE, sun_pos, (earth_x, earth_y), 1)
-    pygame.draw.line(screen, WHITE, sun_pos, (mars_x, mars_y), 1)
+    #pygame.draw.line(screen, WHITE, sun_pos, (earth_x, earth_y), 1)
+    #pygame.draw.line(screen, WHITE, sun_pos, (mars_x, mars_y), 1)
 
     # Draw the sun
     pygame.draw.circle(screen, YELLOW, sun_pos, sun_radius)
@@ -137,7 +137,8 @@ while running:
     pygame.draw.circle(screen, BLUE, (int(earth_x), int(earth_y)), earth_radius)
     pygame.draw.circle(screen, RED, (int(mars_x), int(mars_y)), mars_radius)
     pygame.draw.circle(screen, GREEN, (int(venus_x), int(venus_y)), venus_radius)
-
+    pygame.draw.circle(screen, ORANGE, (int(mercury_x), int(mercury_y)),mercury_radius)
+    pygame.draw.circle(screen, PURPLE, (int(jupiter_x), int(jupiter_y)),jupiter_radius)
 
     #Draw the key
     key_x =10
@@ -150,7 +151,7 @@ while running:
 
     # Update the display
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(40)
 
 # Quit the game
 pygame.quit()
