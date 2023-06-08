@@ -1,8 +1,3 @@
-#constants
-meters_per_astronomical_unit = 1.4959787**11
-meters_per_earth_equatorial_radius = 6378140.0
-earth_rad_per_astronomical_unit = meters_per_astronomical_unit / meters_per_earth_equatorial_radius
-
 from OrbitalDynamics import *
 from scipy.spatial.transform import Rotation
 from datetime import timedelta

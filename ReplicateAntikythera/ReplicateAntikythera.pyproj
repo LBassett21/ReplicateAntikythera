@@ -21,7 +21,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AngleMath.py" />
     <Compile Include="GUI.py" />
     <Compile Include="OrbitalDynamics.py">
       <SubType>Code</SubType>
