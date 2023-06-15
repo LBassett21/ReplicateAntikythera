@@ -25,13 +25,7 @@ class Satellite:
 
         pos = [r, 0, 0]
 
-        rot = Rotation.from_euler('z', -orbit.La, degrees = True)
-        pos = rot.apply(pos)
-
-        rot = Rotation.from_euler('x', orbit.i, degrees = True)
-        pos = rot.apply(pos)
-
-        rot = Rotation.from_euler('z', 2 * orbit.La + orbit.w + math.degrees(f), degrees = True)
+        rot = Rotation.from_euler('ZXZ', [-orbit.La, orbit.i, orbit.w + math.degrees(f)], degrees = True)
         pos = rot.apply(pos)
 
         if (primary != None):
@@ -54,8 +48,9 @@ class Asteroid:
 
 def main():
     #define orbits
-    # semimajor axis, eccentricity, longitude of ascending node, argument of perihelion, orbital period, date of periapsis
-    earth_orbit = Orbit(1, 0.016710, 0, -11.26064, 114.20783, 1, date(2024, 1, 4))
+    # semimajor axis, eccentricity, angle of inclination, longitude of ascending node, longitude of perihelion, orbital period, date of periapsis
+    #earth_orbit = Orbit(1, 0.016710, 0, -11.26064, 114.20783, 1, date(2024, 1, 4))
+    earth_orbit = Orbit(1, 0.5, 135, 0, 0, 1, date(2024, 1, 4))
     earth = Planet(earth_orbit)
     print(earth.getPos(0))
 
