@@ -3,6 +3,9 @@ import math
 import pygame.font
 from datetime import *
 import random
+from OrbitalDynamics import *
+from ReplicateAntikythera import *
+import time
 
 #Reference date
 ref_date = date(2024, 1, 4)
@@ -109,11 +112,24 @@ for _ in range(asteroid_count):
     asteroid_angle = random.uniform(0, 2 * math.pi)
     asteroids.append((asteroid_distance, asteroid_speed, asteroid_angle))
 
+db = Database()
+db.initDatabase()
+
+earth_orbit = Orbit.fromDb("Earth", db)
+earth = Planet(earth_orbit)
+
 # Main game loop
 running = True
 clock = pygame.time.Clock()
 
+sim_time = 0
+curr_time = time.time()
 while running:
+    prev_time = curr_time
+    curr_time = time.time()
+    dt = curr_time - prev_time
+    sim_time += (dt * 1000) / 
+
     # Process events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -125,8 +141,8 @@ while running:
     screen.fill(BLACK)
 
     # Update planet positions
-    earth_x = sun_pos[0] + math.cos(earth_angle) * earth_distance
-    earth_y = sun_pos[1] + math.sin(earth_angle) * earth_distance
+    earth_x = sun_pos[0] + earth.getPos(sim_time)[0] * 100
+    earth_y = sun_pos[1] + earth.getPos(sim_time)[1] * 100
     earth_angle += earth_speed
 
     moon_x = earth_x + math.cos(moon_angle) * moon_distance

@@ -4,6 +4,8 @@ from re import I
 from tkinter import Label
 from scipy.optimize import newton
 from datetime import *
+from Database import Database
+import re
 
 ref_date = date(2024, 1, 4)
 
@@ -47,6 +49,24 @@ class Orbit():
         self.w = w
         self.T = T
         self.dop = dop
+
+    def fromDb(name, db):
+        a = db.fetchValue(name, "semi_major_axis")
+        e = db.fetchValue(name, "eccentricity")
+        i = db.fetchValue(name, "angle_of_inclination")
+        La = db.fetchValue(name, "longitude_of_ascending_node")
+        w = db.fetchValue(name, "argument_of_periapsis")
+        T = db.fetchValue(name, "orbital_period")
+
+        db_top = db.fetchValue("Earth", "time_of_periapsis")
+        matches = re.search("(\d{4})-(\d{2})-(\d{2})", db_top)
+
+        dop = date(int(matches[1]), int(matches[2]), int(matches[3]))
+
+        print(a,e,i,La,w,T,dop)
+
+        return Orbit(a, e, i, La, w, T, dop)
+
 
     '''
     Given sim time (t), find time since periapsis

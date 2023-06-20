@@ -1,8 +1,10 @@
+from cgi import test
 from OrbitalDynamics import *
 from scipy.spatial.transform import Rotation
 from datetime import timedelta
 
 import GUI
+from Database import Database
 
 '''
 primary: the satellite or planet around which the satellite orbits
@@ -53,11 +55,13 @@ class Asteroid:
         pass
 
 def main():
-    #define orbits
-    # semimajor axis, eccentricity, longitude of ascending node, argument of perihelion, orbital period, date of periapsis
-    earth_orbit = Orbit(1, 0.016710, 0, -11.26064, 114.20783, 1, date(2024, 1, 4))
+    db = Database()
+    db.initDatabase()
+
+    earth_orbit = Orbit.fromDb("Earth", db)
     earth = Planet(earth_orbit)
-    print(earth.getPos(0))
+
+    db.closeDatabase()
 
 if (__name__ == "__main__"):
     main()
