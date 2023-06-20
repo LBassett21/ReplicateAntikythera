@@ -128,7 +128,7 @@ while running:
     prev_time = curr_time
     curr_time = time.time()
     dt = curr_time - prev_time
-    sim_time += (dt * 1000) / 
+    sim_time += (dt * (1/4))
 
     # Process events
     for event in pygame.event.get():

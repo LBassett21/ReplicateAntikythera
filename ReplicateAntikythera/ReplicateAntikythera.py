@@ -27,13 +27,7 @@ class Satellite:
 
         pos = [r, 0, 0]
 
-        rot = Rotation.from_euler('z', -orbit.La, degrees = True)
-        pos = rot.apply(pos)
-
-        rot = Rotation.from_euler('x', orbit.i, degrees = True)
-        pos = rot.apply(pos)
-
-        rot = Rotation.from_euler('z', 2 * orbit.La + orbit.w + math.degrees(f), degrees = True)
+        rot = Rotation.from_euler('ZXZ', [-orbit.La, orbit.i, orbit.w + math.degrees(f)], degrees = True)
         pos = rot.apply(pos)
 
         if (primary != None):
