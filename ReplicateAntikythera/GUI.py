@@ -7,6 +7,41 @@ from OrbitalDynamics import *
 from ReplicateAntikythera import *
 import time
 
+orbit_traces = {}
+
+def scale(d):
+    return (1/600-1/30)*d + 1
+
+def drawOrbit(planet, surface, sim_time = 0, sample_points = 250, use_cache = True):
+    if planet in orbit_traces and use_cache:
+        orbit_trace = orbit_traces[planet]
+    else:
+        orbit_trace = pygame.Surface((width, height), pygame.SRCALPHA)
+        points = []
+        num_points = sample_points
+        for i in range(0, num_points):
+            t = i * (planet.orbit.T / num_points)
+            pos = (planet.getPos(t)) * px_per_au
+            point = (pos[0] + width / 2, pos[1] + height / 2)
+            points.append(point)
+        pygame.draw.polygon(orbit_trace, pygame.Color(255, 255, 255), points, 1)
+        if use_cache:
+            orbit_traces[planet] = orbit_trace
+
+    primary_pos = planet.getPrimaryPos(sim_time)
+    offset_x = (primary_pos[0] * px_per_au) 
+    offset_y = (primary_pos[1] * px_per_au)
+
+    surface.blit(orbit_trace, (offset_x, offset_y))
+
+def drawSatellite(sat, sim_time, color, radius, surface):
+    pos_x = width/2 + sat.getPrimaryPos(sim_time)[0] + sat.getPos(sim_time)[0] * px_per_au
+    pos_y = height/2 + sat.getPrimaryPos(sim_time)[1] + sat.getPos(sim_time)[1] * px_per_au
+    pygame.draw.circle(surface, color, (pos_x, pos_y), radius)
+
+db = Database()
+db.initDatabase()
+
 #Reference date
 ref_date = date(2024, 1, 4)
 
@@ -15,6 +50,8 @@ pygame.init()
 
 # Set up the display
 width, height = 800, 600 #size of the display.
+# AU to px conversion
+px_per_au = 100
 screen = pygame.display.set_mode((width, height)) #creating pygame screen with width and height
 pygame.display.set_caption("2D Solar System") #title
 
@@ -41,7 +78,7 @@ PURPLE = (128, 0, 128)
 WHITE = (255, 255, 255)
 
 # Define planet properties
-sun_radius = 30
+sun_radius = 25
 sun_pos = (width // 2, height // 2)
 sun_mass = 1000
 
@@ -82,6 +119,8 @@ jupiter_speed = -0.008
 jupiter_angle = 0
 jupiter_mass = 2.5
 
+neptune_radius = 9
+
 
 #Define the information for the key
 key_font = pygame.font.SysFont(None, 16) #font for the key
@@ -115,8 +154,22 @@ for _ in range(asteroid_count):
 db = Database()
 db.initDatabase()
 
-earth_orbit = Orbit.fromDb("Earth", db)
-earth = Planet(earth_orbit)
+planets = {
+    "Mercury": Planet(Orbit.fromDb("Mercury", db)),
+    "Venus": Planet(Orbit.fromDb("Venus", db)),
+    "Earth" : Planet(Orbit.fromDb("Earth", db)),
+    "Mars": Planet(Orbit.fromDb("Mars", db)),
+    #"Jupiter": Planet(Orbit.fromDb("Jupiter", db)),
+    #"Saturn": Planet(Orbit.fromDb("Saturn", db)),
+    #"Uranus": Planet(Orbit.fromDb("Uranus", db)),
+    "Neptune": Planet(Orbit.fromDb("Neptune", db))
+}
+
+moons = {
+    "Moon": Moon(Orbit.fromDb("Moon", db), planets["Earth"])
+}
+
+moons["Moon"].orbit.a = 0.2
 
 # Main game loop
 running = True
@@ -141,16 +194,18 @@ while running:
     screen.fill(BLACK)
 
     # Update planet positions
-    earth_x = sun_pos[0] + earth.getPos(sim_time)[0] * 100
-    earth_y = sun_pos[1] + earth.getPos(sim_time)[1] * 100
+    earth_x = sun_pos[0] + planets["Earth"].getPos(sim_time)[0] * px_per_au
+    earth_y = sun_pos[1] + planets["Earth"].getPos(sim_time)[1] * px_per_au
     earth_angle += earth_speed
+
+    """
 
     moon_x = earth_x + math.cos(moon_angle) * moon_distance
     moon_y = earth_y + math.sin(moon_angle) * moon_distance
     moon_angle += moon_speed
 
-    mars_x = sun_pos[0] + math.cos(mars_angle) * mars_distance
-    mars_y = sun_pos[1] + math.sin(mars_angle) * mars_distance
+    mars_x = sun_pos[0] + planets["Mars"].getPos(sim_time)[0] * px_per_au
+    mars_y = sun_pos[1] + planets["Mars"].getPos(sim_time)[1] * px_per_au
     mars_angle += mars_speed
 
     venus_x = sun_pos[0] + math.cos(venus_angle) * venus_distance
@@ -164,6 +219,8 @@ while running:
     jupiter_x = sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance
     jupiter_y = sun_pos[1] + math.sin(jupiter_angle)
     jupiter_angle += jupiter_speed
+
+    """
 
     #Draw the rotating lines for the planet
     #pygame.draw.line(screen, WHITE, sun_pos, (earth_x, earth_y), 1)
@@ -183,14 +240,23 @@ while running:
     pygame.draw.circle(screen, YELLOW, sun_pos, sun_radius)
 
     #Draw the moon
-    pygame.draw.circle(screen, WHITE, (int(moon_x), int (moon_y)),moon_radius)
+    #pygame.draw.circle(screen, WHITE, (int(moon_x), int (moon_y)), moon_radius)
 
     # Draw the planets
-    pygame.draw.circle(screen, BLUE, (int(earth_x), int(earth_y)), earth_radius)
-    pygame.draw.circle(screen, RED, (int(mars_x), int(mars_y)), mars_radius)
-    pygame.draw.circle(screen, GREEN, (int(venus_x), int(venus_y)), venus_radius)
-    pygame.draw.circle(screen, ORANGE, (int(mercury_x), int(mercury_y)),mercury_radius)
-    pygame.draw.circle(screen, PURPLE, (int(jupiter_x), int(jupiter_y)),jupiter_radius)
+    drawOrbit(planets["Mercury"], screen)
+    drawSatellite(planets["Mercury"], sim_time, ORANGE, mercury_radius, screen)
+    drawOrbit(planets["Venus"], screen)
+    drawSatellite(planets["Venus"], sim_time, GREEN, venus_radius, screen)
+    drawOrbit(planets["Earth"], screen)
+    drawSatellite(planets["Earth"], sim_time, BLUE, earth_radius, screen)
+    #drawOrbit(moons["Moon"], screen, sim_time)
+    drawSatellite(moons["Moon"], sim_time, WHITE, moon_radius, screen)
+    drawOrbit(planets["Mars"], screen)
+    drawSatellite(planets["Mars"], sim_time, RED, mars_radius, screen)
+    drawOrbit(planets["Neptune"], screen)
+    drawSatellite(planets["Neptune"], sim_time, BLUE, neptune_radius, screen)
+
+    #pygame.draw.circle(screen, PURPLE, (int(jupiter_x), int(jupiter_y)),jupiter_radius)
 
     # Draws the lines around the earth for zodiac signs
     for line_point in zodiac_line_points:
@@ -226,6 +292,7 @@ while running:
 
         pygame.draw.circle(screen, WHITE, (int(asteroid_x), int(asteroid_y)), asteroid_radius)
 
+
     # Update the asteroids list
     asteroids = [asteroid for asteroid in asteroids if asteroid[0] >= asteroid_distance_min]
 
@@ -234,5 +301,6 @@ while running:
     clock.tick(40)
 
 # Quit the game
+db.closeDatabase()
 pygame.quit()
 

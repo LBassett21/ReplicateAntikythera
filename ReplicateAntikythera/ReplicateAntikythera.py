@@ -35,6 +35,16 @@ class Satellite:
 
         return pos
 
+    def getPrimaryPos(self, t):
+        if self.primary == None:
+            return (0, 0, 0)
+        else:
+            return self.primary.getPos(t)
+
+    def getDistance(self, t):
+        return self.orbit.getDistance(t)
+
+
 class Planet(Satellite):
     def __init__(self, orbit):
         # Planets have no primary, since they orbit the Sun, which is at the origin.

@@ -1,5 +1,7 @@
 import sqlite3
 
+solar_years_to_days = 365.242
+
 class Database():
     database = None
     dbcursor = None
@@ -27,7 +29,13 @@ class Database():
         '''
         )
 
+        self.addObject("Mercury", "Sun", 0.387098, 0.205630, 7.005, 48.331, 29.124, 88 / solar_years_to_days, "2026-08-13", "J2000")
+        self.addObject("Venus", "Sun", 0.723332, 0.006772, 3.39458, 76.680, 54.884, 583.92 / solar_years_to_days, "2026-12-25", "J2000")
         self.addObject("Earth", "Sun", 1, 0.0167086, 0.00005, -11.26064, 114.20783, 1, "2023-01-04", "J2000")
+        self.addObject("Mars", "Sun", 1.52368055, 0.0934, 1.850, 49.57845, 286.5, 779.94 / solar_years_to_days, "2022-6-21", "J2000")
+        self.addObject("Jupiter", "Sun", 5.2038, 0.0489, 1.303, 100.464, 273.867, 398.88 / solar_years_to_days, "2023-1-21", "J2000") 
+        self.addObject("Neptune", "Sun", 30.07, 0.008678, 1.770, 131.783, 273.187, 367.49 / solar_years_to_days, "2042-09-04", "J2000")
+        self.addObject("Moon", "Earth", 0.00257, 0.0549, 5.145, 0, 0, 29.530 / solar_years_to_days, "2023-01-04", "J2000") 
 
         self.database.commit()
 
@@ -72,4 +80,5 @@ class Database():
             """
         )
 
-        return self.dbcursor.fetchall()[0][0]
+        result = self.dbcursor.fetchone()[0]
+        return result

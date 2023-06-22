@@ -8,6 +8,7 @@ from Database import Database
 import re
 
 ref_date = date(2024, 1, 4)
+solar_years_to_days = 365.242
 
 '''
 Kepler's Equation, used in finding true anomaly in tsoToF
@@ -62,8 +63,6 @@ class Orbit():
         matches = re.search("(\d{4})-(\d{2})-(\d{2})", db_top)
 
         dop = date(int(matches[1]), int(matches[2]), int(matches[3]))
-
-        print(a,e,i,La,w,T,dop)
 
         return Orbit(a, e, i, La, w, T, dop)
 
