@@ -1,11 +1,12 @@
 import pygame
 import math
 import pygame.font
-from datetime import *
+from datetime import datetime, timedelta
 import random
 
 #Reference date
-ref_date = date(2024, 1, 4)
+ref_date = datetime(2023, 1, 4)
+current_date = ref_date
 
 # Initialize Pygame
 pygame.init()
@@ -14,6 +15,11 @@ pygame.init()
 width, height = 800, 600 #size of the display.
 screen = pygame.display.set_mode((width, height)) #creating pygame screen with width and height
 pygame.display.set_caption("2D Solar System") #title
+
+start_window = pygame.Surface((width, height))
+start_font = pygame.font.SysFont(None, 36)
+start_text = start_font.render("Press START to begin", True, (255, 255, 255))
+start_text_rect = start_text.get_rect(center=(width // 2, height // 2))
 
 #background_image = pygame.image.load("C:\Solarsystem\stars_solarsystem.jpg")
 #background_image = pygame.transform.scale(background_image, (width, height))
@@ -94,6 +100,11 @@ key_text = {
 
     }
 
+pause_button_rect = pygame.Rect(width - 100, 10, 90, 30)
+pause_button_text = key_font.render("Pause", True, RED)
+
+paused = False;
+
 # Define asteroid belt properties
 asteroid_radius = 2
 asteroid_distance_min = 250
@@ -113,52 +124,71 @@ for _ in range(asteroid_count):
 running = True
 clock = pygame.time.Clock()
 
+show_start_window = True
+
 while running:
     # Process events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if pause_button_rect.collidepoint(event.pos):
+                paused = not paused
+            elif show_start_window and start_text_rect.collidepoint(event.pos):
+                show_start_window = False
 
+    if show_start_window:
+        screen.blit(start_window, (0, 0))
+        screen.blit(start_text, start_text_rect)
+
+        title_font = pygame.font.SysFont(None, 80)
+        title_text = title_font.render("Replicate Antikythera", True, WHITE)
+        title_text_rect = title_text.get_rect(center=(width // 2, height // 4))
+        screen.blit(title_text, title_text_rect)
+
+        pygame.display.flip()
+        continue
     #screen.blit(background_image,(800,600))
 
     # Clear the screen
     screen.fill(BLACK)
 
+    if not paused:
     # Update planet positions
-    earth_x = sun_pos[0] + math.cos(earth_angle) * earth_distance
-    earth_y = sun_pos[1] + math.sin(earth_angle) * earth_distance
-    earth_angle += earth_speed
+        earth_x = sun_pos[0] + math.cos(earth_angle) * earth_distance
+        earth_y = sun_pos[1] + math.sin(earth_angle) * earth_distance
+        earth_angle += earth_speed
 
-    moon_x = earth_x + math.cos(moon_angle) * moon_distance
-    moon_y = earth_y + math.sin(moon_angle) * moon_distance
-    moon_angle += moon_speed
+        moon_x = earth_x + math.cos(moon_angle) * moon_distance
+        moon_y = earth_y + math.sin(moon_angle) * moon_distance
+        moon_angle += moon_speed
 
-    mars_x = sun_pos[0] + math.cos(mars_angle) * mars_distance
-    mars_y = sun_pos[1] + math.sin(mars_angle) * mars_distance
-    mars_angle += mars_speed
+        mars_x = sun_pos[0] + math.cos(mars_angle) * mars_distance
+        mars_y = sun_pos[1] + math.sin(mars_angle) * mars_distance
+        mars_angle += mars_speed
 
-    venus_x = sun_pos[0] + math.cos(venus_angle) * venus_distance
-    venus_y = sun_pos[1] + math.sin(venus_angle) * venus_distance
-    venus_angle += venus_speed
+        venus_x = sun_pos[0] + math.cos(venus_angle) * venus_distance
+        venus_y = sun_pos[1] + math.sin(venus_angle) * venus_distance
+        venus_angle += venus_speed
 
-    mercury_x = sun_pos[0] + math.cos(mercury_angle) * mercury_distance
-    mercury_y = sun_pos[1] + math.sin(mercury_angle) * mercury_distance
-    mercury_angle += mercury_speed
+        mercury_x = sun_pos[0] + math.cos(mercury_angle) * mercury_distance
+        mercury_y = sun_pos[1] + math.sin(mercury_angle) * mercury_distance
+        mercury_angle += mercury_speed
 
-    jupiter_x = sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance
-    jupiter_y = sun_pos[1] + math.sin(jupiter_angle)
-    jupiter_angle += jupiter_speed
+        jupiter_x = sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance
+        jupiter_y = sun_pos[1] + math.sin(jupiter_angle)
+        jupiter_angle += jupiter_speed
 
     #Draw the rotating lines for the planet
     #pygame.draw.line(screen, WHITE, sun_pos, (earth_x, earth_y), 1)
     #pygame.draw.line(screen, WHITE, sun_pos, (mars_x, mars_y), 1)
 
     # Clear the line positions
-    zodiac_line_points.clear()
+        zodiac_line_points.clear()
 
     # Calculate the zodiac line endpoints
     for i in range(12):  # Assuming there are 12 zodiac signs
-        angle = (i * math.pi / 6)  # Angle for each zodiac sign
+        angle = earth_angle + (i * math.pi / 6)  # Angle for each zodiac sign
         line_x = earth_x + math.cos(angle) * 50  # Adjust the length of the lines as needed
         line_y = earth_y + math.sin(angle) * 50
         zodiac_line_points.append((line_x, line_y))
@@ -191,13 +221,13 @@ while running:
         screen.blit(key_surface, (key_x, key_y + i * key_padding))
 
     # Calculates the current sign
-    current_sign_index = int((earth_angle / (2 * math.pi)) * len(zodiac_signs)) % len(zodiac_signs)
-    current_sign = zodiac_signs[current_sign_index]
+        current_sign_index = int((earth_angle / (2 * math.pi)) * len(zodiac_signs)) % len(zodiac_signs)
+        current_sign = zodiac_signs[current_sign_index]
 
-    text_box = pygame.Surface((200, 30))
-    text_box.fill(BLACK)
-    text_surface = key_font.render(f"Current Sign: {current_sign}", True, WHITE)
-    text_box.blit(text_surface, (10, 5))
+        text_box = pygame.Surface((200, 30))
+        text_box.fill(BLACK)
+        text_surface = key_font.render(f"Current Sign: {current_sign}", True, WHITE)
+        text_box.blit(text_surface, (10, 5))
 
     screen.blit(text_box, (key_x, key_y + len(key_text) * key_padding))
 
@@ -213,7 +243,23 @@ while running:
     # Update the asteroids list
     asteroids = [asteroid for asteroid in asteroids if asteroid[0] >= asteroid_distance_min]
 
+    pygame.draw.rect(screen, RED, pause_button_rect)
+    screen.blit(pause_button_text, pause_button_rect.move(10, 5))
+
+    # Display the current date and time
+    days_per_rotation = 1  # Number of days it takes for Earth to make a full rotation around the Sun
+    moon_speed = -0.1  # Moon's speed of rotation
+    moon_days_per_rotation = days_per_rotation / abs(moon_speed)  # Number of days per Moon rotation
+    moon_angle_normalized = moon_angle % (2 * math.pi)  # Normalize the moon angle
+    moon_time_delta = timedelta(days=(moon_angle_normalized / (2 * math.pi)) * moon_days_per_rotation)
+    current_date = ref_date + moon_time_delta
+
+    date_text = key_font.render(f"Date: {current_date.date()}", True, WHITE)
+    time_text = key_font.render(f"Time: {current_date.strftime('%H:%M:%S')}", True, WHITE)
+    screen.blit(date_text, (10, height - 40))
+    screen.blit(time_text, (10, height - 20))
     # Update the display
+
     pygame.display.flip()
     clock.tick(40)
 
