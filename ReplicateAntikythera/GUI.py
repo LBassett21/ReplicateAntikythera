@@ -12,8 +12,8 @@ current_date = ref_date
 pygame.init()
 
 # Set up the display
-width, height = 800, 600 #size of the display.
-screen = pygame.display.set_mode((width, height)) #creating pygame screen with width and height
+width, height = pygame.display.Info().current_w, pygame.display.Info().current_h #size of the display.
+screen = pygame.display.set_mode((width,height),pygame.FULLSCREEN) #creating pygame screen with width and height
 pygame.display.set_caption("2D Solar System") #title
 
 start_window = pygame.Surface((width, height))
@@ -21,8 +21,8 @@ start_font = pygame.font.SysFont(None, 36)
 start_text = start_font.render("Press START to begin", True, (255, 255, 255))
 start_text_rect = start_text.get_rect(center=(width // 2, height // 2))
 
-#background_image = pygame.image.load("C:\Solarsystem\stars_solarsystem.jpg")
-#background_image = pygame.transform.scale(background_image, (width, height))
+background_image = pygame.image.load("starry_night.jpg")
+background_image = pygame.transform.smoothscale(background_image, (width,height))
 
 #List to store zodiac line position
 zodiac_line_points = []
@@ -96,14 +96,15 @@ key_text = {
     "Venus": "Green",
     "Mercury": "Orange",
     "Jupiter": "Purple"
-
-
     }
 
 pause_button_rect = pygame.Rect(width - 100, 10, 90, 30)
-pause_button_text = key_font.render("Pause", True, RED)
+pause_button_text = key_font.render("Pause", True, BLACK)
 
 paused = False;
+
+quit_button_rect = pygame.Rect(width - 200, 10, 90, 30)
+quit_button_text = key_font.render("Exit", True, BLACK)
 
 # Define asteroid belt properties
 asteroid_radius = 2
@@ -132,6 +133,8 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if quit_button_rect.collidepoint(event.pos):
+                running = False
             if pause_button_rect.collidepoint(event.pos):
                 paused = not paused
             elif show_start_window and start_text_rect.collidepoint(event.pos):
@@ -148,10 +151,10 @@ while running:
 
         pygame.display.flip()
         continue
-    #screen.blit(background_image,(800,600))
+    screen.blit(background_image,(0,0))
 
     # Clear the screen
-    screen.fill(BLACK)
+    #screen.fill(BLACK)
 
     if not paused:
     # Update planet positions
@@ -244,7 +247,10 @@ while running:
     asteroids = [asteroid for asteroid in asteroids if asteroid[0] >= asteroid_distance_min]
 
     pygame.draw.rect(screen, RED, pause_button_rect)
-    screen.blit(pause_button_text, pause_button_rect.move(10, 5))
+    screen.blit(pause_button_text, pause_button_rect.move(30,10))
+
+    pygame.draw.rect(screen, RED, quit_button_rect)
+    screen.blit(quit_button_text, quit_button_rect.move(30,10))
 
     # Display the current date and time
     days_per_rotation = 1  # Number of days it takes for Earth to make a full rotation around the Sun
