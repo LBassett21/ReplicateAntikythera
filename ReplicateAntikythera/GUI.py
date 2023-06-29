@@ -158,7 +158,7 @@ while running:
 
     # Calculate the zodiac line endpoints
     for i in range(12):  # Assuming there are 12 zodiac signs
-        angle = earth_angle + (i * math.pi / 6)  # Angle for each zodiac sign
+        angle = (i * math.pi / 6)  # Angle for each zodiac sign
         line_x = earth_x + math.cos(angle) * 50  # Adjust the length of the lines as needed
         line_y = earth_y + math.sin(angle) * 50
         zodiac_line_points.append((line_x, line_y))
