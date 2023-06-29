@@ -34,6 +34,7 @@ def drawOrbit(planet, surface, sim_time = 0, sample_points = 250, use_cache = Tr
 
     surface.blit(orbit_trace, (offset_x, offset_y))
 
+
 def drawSatellite(sat, sim_time, color, radius, surface):
     pos_x = width/2 + sat.getPrimaryPos(sim_time)[0] + sat.getPos(sim_time)[0] * px_per_au
     pos_y = height/2 + sat.getPrimaryPos(sim_time)[1] + sat.getPos(sim_time)[1] * px_per_au
@@ -264,7 +265,7 @@ while running:
 
 
     #Draw the key
-    key_x =10
+    key_x = 10
     key_y = 10
     key_padding = 20
 
