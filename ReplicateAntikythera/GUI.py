@@ -245,7 +245,7 @@ while running:
         line_y = earth_y + math.sin(angle) * 50
         zodiac_line_points.append((line_x, line_y))
 
-    scaled_screen.blit(scaled_background_image, (offset_x, offset_y))
+    scaled_screen.blit(scaled_background_image, (0, 0))
 
     # Draw the sun
     pygame.draw.circle(scaled_screen, YELLOW, (int(scaled_sun_pos[0]),int(scaled_sun_pos[1])), int(sun_radius//zoom_scale))
