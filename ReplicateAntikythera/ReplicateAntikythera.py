@@ -1,6 +1,8 @@
 from OrbitalDynamics import *
 from scipy.spatial.transform import Rotation
 from datetime import timedelta
+from numpy import *
+from math import acos
 
 import GUI
 
@@ -8,6 +10,8 @@ import GUI
 primary: the satellite or planet around which the satellite orbits
 '''
 class Satellite:
+    t_offset=0
+
     def __init__(self, orbit, primary):
         self.orbit = orbit
         self.primary = primary
@@ -16,12 +20,16 @@ class Satellite:
     Given sim time (t), compute the position of the satellite.
     The position has the form of a 3d vector (X, Y, Z) with units in AU with reference to the Sun (0, 0, 0).
     '''
-    def getPos(self, t):
+    def getPos(self, t=None, f=None):
         orbit = self.orbit
         primary = self.primary
 
-        f = orbit.tToF(t)
-        r = orbit.getDistance(t)
+        if(f==None):
+            f = orbit.tToF(t+self.t_offset)
+            r = orbit.getDistance(t+self.t_offset)
+        else:
+            t = orbit.fToT(f)
+            r = orbit.getDistance(t+self.t_offset)
 
         pos = [r, 0, 0]
 
@@ -32,6 +40,21 @@ class Satellite:
             pos += primary.getPos(t)
 
         return pos
+
+    def align(self, t, direction):
+        curr_dir = self.getPos(t)
+
+        mag_dir = (direction[0]**2 + direction[1]**2 + direction[2]**2) ** (1/2)
+        mag_curr_dir = (curr_dir[0]**2 + direction[1]**2 + direction[2]**2) ** (1/2)
+
+        angle = acos(dot(curr_dir, direction) / (mag_dir * mag_curr_dir))
+
+        f = angle - radians(self.orbit.La + self.orbit.w)
+
+        t_dir = self.orbit.fToT(f)
+        t_offset = t_dir - t
+
+        return t_offset
 
 class Planet(Satellite):
     def __init__(self, orbit):
