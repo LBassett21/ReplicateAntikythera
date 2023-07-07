@@ -14,13 +14,12 @@ pygame.init()
 # Set up the display
 width, height = pygame.display.Info().current_w, pygame.display.Info().current_h #size of the display.
 screen = pygame.display.set_mode((0,0),pygame.RESIZABLE) #creating pygame screen with width and height
-pygame.display.set_caption("2D Solar System") #title
+pygame.display.set_caption("Replicate Antikythera") #title
 
+# Start window surface definition
 start_window = pygame.Surface((width, height))
-start_font = pygame.font.SysFont(None, 36)
-start_text = start_font.render("Press START to begin", True, (255, 255, 255))
-start_text_rect = start_text.get_rect(center=(width // 2, height // 2))
 
+# Imports background image to program
 background_image = pygame.image.load("starry_night.jpg")
 background_image = pygame.transform.smoothscale(background_image, (width,height))
 
@@ -145,9 +144,6 @@ while running:
 
     # Scale the background image
     scaled_background_image = pygame.transform.smoothscale(background_image, (scaled_width, scaled_height))
-
-    # Scale the start window and text
-    scaled_start_text = pygame.transform.smoothscale(start_text, (scaled_width, scaled_height))
   
     # Calculate the center of the scaled screen
     scaled_center_x = scaled_width // 2
@@ -158,7 +154,6 @@ while running:
     scaled_mouse_x = (mouse_x - scaled_center_x) / zoom_scale + scaled_center_x
     scaled_mouse_y = (mouse_y - scaled_center_y) / zoom_scale + scaled_center_y
 
-
     # Process events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -168,7 +163,7 @@ while running:
                 running = False
             if pause_button_rect.collidepoint(event.pos):
                 paused = not paused
-            elif show_start_window and start_text_rect.collidepoint(event.pos):
+            elif show_start_window and button_rect.collidepoint(event.pos):
                 show_start_window = False
             elif not dragging:
                 dragging = True
@@ -185,13 +180,20 @@ while running:
             offset_y = zoom_center_y - scaled_mouse_y / zoom_scale
 
     if show_start_window:
-        screen.blit(start_window, (0, 0))
-        screen.blit(start_text, start_text_rect)
+        screen.blit(background_image, (0,0))
 
-        title_font = pygame.font.SysFont(None, 80)
-        title_text = title_font.render("Replicate Antikythera", True, WHITE)
-        title_text_rect = title_text.get_rect(center=(width // 2, height // 4))
+        # Draw the title
+        title_font = pygame.font.SysFont("Arial", 80, bold=True)
+        title_text = title_font.render("Replicate Antikythera", True, (255, 255, 255))
+        title_text_rect = title_text.get_rect(center=(width // 2, height // 2 - 50))
         screen.blit(title_text, title_text_rect)
+
+        # Draw the start button
+        button_font = pygame.font.SysFont("Arial", 36)
+        button_text = button_font.render("START", True, WHITE)
+        button_rect = pygame.Rect(width // 2 - 75, height // 2 + 20, 150, 50)
+        pygame.draw.rect(screen, (50, 50, 50), button_rect)
+        screen.blit(button_text, button_rect.move(30, 5))
 
         pygame.display.flip()
         continue
