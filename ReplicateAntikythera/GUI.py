@@ -184,7 +184,7 @@ while running:
 
         # Draw the title
         title_font = pygame.font.SysFont("Arial", 80, bold=True)
-        title_text = title_font.render("Replicate Antikythera", True, (255, 255, 255))
+        title_text = title_font.render("Replicate Antikythera", True, WHITE)
         title_text_rect = title_text.get_rect(center=(width // 2, height // 2 - 50))
         screen.blit(title_text, title_text_rect)
 
@@ -209,28 +209,28 @@ while running:
     # Update planet positions
         scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 
-        earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance
-        earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance
+        earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
+        earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
         earth_angle += earth_speed
 
-        moon_x = earth_x + math.cos(moon_angle) * moon_distance
-        moon_y = earth_y + math.sin(moon_angle) * moon_distance
+        moon_x = earth_x + math.cos(moon_angle) * moon_distance // zoom_scale
+        moon_y = earth_y + math.sin(moon_angle) * moon_distance // zoom_scale
         moon_angle += moon_speed
 
-        mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance
-        mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance
+        mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance // zoom_scale
+        mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance // zoom_scale
         mars_angle += mars_speed
 
-        venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance
-        venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance
+        venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance // zoom_scale
+        venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance // zoom_scale
         venus_angle += venus_speed
 
-        mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance
-        mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance
+        mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance // zoom_scale
+        mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance // zoom_scale
         mercury_angle += mercury_speed
 
-        jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance
-        jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle)
+        jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
+        jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
         jupiter_angle += jupiter_speed
 
     #Draw the rotating lines for the planet
@@ -268,8 +268,8 @@ while running:
 
     for asteroid in asteroids:
         asteroid_distance, asteroid_speed, asteroid_angle = asteroid
-        asteroid_x = scaled_sun_pos[0] + math.cos(asteroid_angle) * asteroid_distance
-        asteroid_y = scaled_sun_pos[1] + math.sin(asteroid_angle) * asteroid_distance
+        asteroid_x = scaled_sun_pos[0] + math.cos(asteroid_angle) * asteroid_distance // zoom_scale
+        asteroid_y = scaled_sun_pos[1] + math.sin(asteroid_angle) * asteroid_distance // zoom_scale
         asteroid_angle += asteroid_speed
         asteroid = (asteroid_distance, asteroid_speed, asteroid_angle)
 
