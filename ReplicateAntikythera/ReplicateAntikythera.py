@@ -2,7 +2,7 @@ from OrbitalDynamics import *
 from scipy.spatial.transform import Rotation
 from datetime import timedelta
 from numpy import *
-from math import acos
+from math import atan2
 
 import GUI
 
@@ -10,7 +10,7 @@ import GUI
 primary: the satellite or planet around which the satellite orbits
 '''
 class Satellite:
-    t_offset=0
+    f_offset=0
 
     def __init__(self, orbit, primary):
         self.orbit = orbit
@@ -25,11 +25,11 @@ class Satellite:
         primary = self.primary
 
         if(f==None):
-            f = orbit.tToF(t+self.t_offset)
-            r = orbit.getDistance(t+self.t_offset)
+            f = orbit.tToF(t) + self.f_offset
+            r = orbit.getDistance(t)
         else:
-            t = orbit.fToT(f)
-            r = orbit.getDistance(t+self.t_offset)
+            t = orbit.fToT(f + self.f_offset)
+            r = orbit.getDistance(t)
 
         pos = [r, 0, 0]
 
@@ -42,19 +42,21 @@ class Satellite:
         return pos
 
     def align(self, t, direction):
-        curr_dir = self.getPos(t)
+        """
+        t: the current time (sim time)
 
-        mag_dir = (direction[0]**2 + direction[1]**2 + direction[2]**2) ** (1/2)
-        mag_curr_dir = (curr_dir[0]**2 + direction[1]**2 + direction[2]**2) ** (1/2)
+        direction: the vector towards the desired position
 
-        angle = acos(dot(curr_dir, direction) / (mag_dir * mag_curr_dir))
+        f1: the current true anomaly
+        f2: the desired true anomaly
 
-        f = angle - radians(self.orbit.La + self.orbit.w)
+        f_offset: f2 - f1
+        """
 
-        t_dir = self.orbit.fToT(f)
-        t_offset = t_dir - t
+        f1 = -self.orbit.tToF(t)
+        f2 = -atan2(direction[1], direction[0]) - radians(self.orbit.w)
 
-        return t_offset
+        self.f_offset = f2 - f1
 
 class Planet(Satellite):
     def __init__(self, orbit):

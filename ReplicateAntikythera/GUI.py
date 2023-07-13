@@ -47,8 +47,8 @@ key_text = {
 
 # semimajor axis, eccentricity, angle of inclination, longitude of ascending node, longitude of perihelion, orbital period, date of periapsis
 p1_orbit = Orbit(1, 0, 0, 0, 0, 1, date(2024, 1, 4))
-p2_orbit = Orbit(2, 0.2, math.pi/6, 0, 0, 2, date(2024, 1, 4))
-p3_orbit = Orbit(3, 0.4, math.pi/3, 0, 0, 3, date(2024, 1, 4))
+p2_orbit = Orbit(2, 0, 0, 0, -45, 1, date(2024, 1, 4))
+p3_orbit = Orbit(3, 0.4, math.pi/3, 0, -90, 3, date(2024, 1, 4))
 #p1_orbit = Orbit(1, 0.016710, 0, -11.26064, 114.20783, 1, date(2024, 1, 4))
 p1 = Planet(p1_orbit)
 p2 = Planet(p2_orbit)
@@ -62,6 +62,9 @@ sim_time = 0
 dt = 0
 
 angle = math.pi
+
+p1.align(sim_time, [1, 1, 0])
+p2.align(sim_time, [-1, 1, 0])
 
 while running:
     # Process events
@@ -82,9 +85,6 @@ while running:
     p1_angle += earth_speed
     '''
 
-    p1.align(sim_time, [1, 0, 0])
-    p2.align(sim_time, [1, 0, 0])
-    p3.align(sim_time, [1, 0, 0])
 
     p1_x = sun_pos[0] + p1.getPos(sim_time)[0] * 100
     p1_y = sun_pos[1] + p1.getPos(sim_time)[1] * 100
