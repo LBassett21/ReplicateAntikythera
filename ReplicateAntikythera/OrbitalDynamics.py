@@ -4,7 +4,6 @@ from re import I
 from tkinter import Label
 from scipy.optimize import newton
 from datetime import *
-from math import *
 
 ref_date = date(2024, 1, 4)
 
@@ -81,22 +80,6 @@ class Orbit():
         f = -2 * math.atan(math.tan(E/2) / (math.sqrt((1 - e) / (1 + e))))
 
         return f
-
-    # True anomaly to time
-    def fToT(self, f):
-        T = self.T
-        e = self.e
-
-        # use f to solve for E
-        E = 2*atan(((1-e)/(1+e))**(1/2)*tan(f/2))
-
-        # use E to solve for M
-        M = E - e*sin(E)
-
-        # use E and M to solve for t
-        t = M/(2*math.pi)*T
-
-        return t
     
     # Get distance from primary at sim time t
     def getDistance(self, t):
