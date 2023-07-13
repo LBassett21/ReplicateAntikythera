@@ -183,14 +183,17 @@ clock = pygame.time.Clock()
 sim_time = 0
 curr_time = time.time()
 
-align_planets(sim_time, [-1, 1, 0], list(planets.values()))
+align_planets(sim_time, [-11, 1, 0], list(planets.values()))
+vector = [1,1,0]
+#align_planets(sim_time, vector, {planets["Earth"], planets["Mars"]})
+#align_planets(sim_time, [-1 * i for i in vector], {moons["Moon"]})
 
 while running:
 
     prev_time = curr_time
     curr_time = time.time()
     dt = curr_time - prev_time
-    sim_time += (dt * (1/4))
+    #sim_time += (dt * (1/4))
     curr_date = ref_date + timedelta(days = sim_time * solar_years_to_days)
 
     # Process events

@@ -6,7 +6,14 @@ class Database():
     database = None
     dbcursor = None
 
-
+    #def initEvents(self):
+    #    self.openDatabase()
+    #
+    #    self.dbcursor.execute("DROP TABLE IF EXISTS EVENTS")
+    #    self.dbcursor.execute(
+    #        "CREATE TABLE IF NOT EXISTS EVENTS (
+    #         name TEXT PRIMARY KEY NOT NULL,
+    #         )")
 
     def initDatabase(self):
         self.openDatabase()

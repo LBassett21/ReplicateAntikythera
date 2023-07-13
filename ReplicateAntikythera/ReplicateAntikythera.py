@@ -6,6 +6,7 @@ from math import *
 
 import GUI
 from Database import Database
+import Tests
 
 '''
 primary: the satellite or planet around which the satellite orbits
