@@ -1,8 +1,11 @@
+from ast import Return
+import re
 import pygame
 import math
 import pygame.font
 from datetime import datetime, timedelta
 import random
+import math
 
 #Reference date
 ref_date = datetime(2023, 1, 4)
@@ -59,7 +62,6 @@ moon_speed = -0.1
 moon_angle = 0
 moon_mass = 0.2
 
-
 mars_radius = 7
 mars_distance = 300
 mars_speed = -0.01
@@ -107,10 +109,10 @@ quit_button_text = key_font.render("Exit", True, WHITE)
 
 # Define asteroid belt properties
 asteroid_radius = 2
-asteroid_distance_min = 250
-asteroid_distance_max = 300
-asteroid_speed_min = -0.03
-asteroid_speed_max = 0.03
+asteroid_distance_min = 325
+asteroid_distance_max = 365
+asteroid_speed_min = -0.3
+asteroid_speed_max = 0.3
 asteroid_count = 200
 asteroids = []
 
@@ -119,7 +121,6 @@ for _ in range(asteroid_count):
     asteroid_speed = random.uniform(asteroid_speed_min, asteroid_speed_max)
     asteroid_angle = random.uniform(0, 2 * math.pi)
     asteroids.append((asteroid_distance, asteroid_speed, asteroid_angle))
-
 # Main game loop
 running = True
 clock = pygame.time.Clock()
@@ -171,11 +172,11 @@ while running:
             if dragging:
                 dragging = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4 and not show_start_window:
-            zoom_scale *= 1.05
+            zoom_scale *= 1.001
             offset_x = zoom_center_x - scaled_mouse_x / zoom_scale
             offset_y = zoom_center_y - scaled_mouse_y / zoom_scale
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5 and not show_start_window:
-            zoom_scale /= 1.05
+            zoom_scale /= 1.001
             offset_x = zoom_center_x - scaled_mouse_x / zoom_scale
             offset_y = zoom_center_y - scaled_mouse_y / zoom_scale
 
@@ -211,27 +212,27 @@ while running:
 
         earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
         earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
-        earth_angle += earth_speed
+        earth_angle += earth_speed * zoom_scale
 
         moon_x = earth_x + math.cos(moon_angle) * moon_distance // zoom_scale
         moon_y = earth_y + math.sin(moon_angle) * moon_distance // zoom_scale
-        moon_angle += moon_speed
+        moon_angle += moon_speed * zoom_scale
 
         mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance // zoom_scale
         mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance // zoom_scale
-        mars_angle += mars_speed
+        mars_angle += mars_speed * zoom_scale
 
         venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance // zoom_scale
         venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance // zoom_scale
-        venus_angle += venus_speed
+        venus_angle += venus_speed * zoom_scale
 
         mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance // zoom_scale
         mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance // zoom_scale
-        mercury_angle += mercury_speed
+        mercury_angle += mercury_speed * zoom_scale
 
         jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
         jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
-        jupiter_angle += jupiter_speed
+        jupiter_angle += jupiter_speed * zoom_scale
 
     #Draw the rotating lines for the planet
     #pygame.draw.line(screen, WHITE, sun_pos, (earth_x, earth_y), 1)
@@ -243,8 +244,8 @@ while running:
     # Calculate the zodiac line endpoints
     for i in range(12):  # Assuming there are 12 zodiac signs
         angle = (i * math.pi / 6)  # Angle for each zodiac sign
-        line_x = earth_x + math.cos(angle) * 50  # Adjust the length of the lines as needed
-        line_y = earth_y + math.sin(angle) * 50
+        line_x = earth_x + math.cos(angle) * (50 // zoom_scale)  # Adjust num value to adjust the length of the lines as needed
+        line_y = earth_y + math.sin(angle) * (50 // zoom_scale)
         zodiac_line_points.append((line_x, line_y))
 
     scaled_screen.blit(scaled_background_image, (0, 0))
@@ -270,7 +271,7 @@ while running:
         asteroid_distance, asteroid_speed, asteroid_angle = asteroid
         asteroid_x = scaled_sun_pos[0] + math.cos(asteroid_angle) * asteroid_distance // zoom_scale
         asteroid_y = scaled_sun_pos[1] + math.sin(asteroid_angle) * asteroid_distance // zoom_scale
-        asteroid_angle += asteroid_speed
+        asteroid_angle += asteroid_speed * zoom_scale
         asteroid = (asteroid_distance, asteroid_speed, asteroid_angle)
 
         pygame.draw.circle(scaled_screen, WHITE, (int(asteroid_x), int(asteroid_y)), asteroid_radius)
@@ -297,7 +298,8 @@ while running:
     # Calculates the current sign
     current_sign_index = int((earth_angle / (2 * math.pi)) * len(zodiac_signs)) % len(zodiac_signs)
     current_sign = zodiac_signs[current_sign_index]
-
+    
+    # Key with planets + current sign updating on earth
     for i, (planet, color) in enumerate(key_text.items()):
         if planet == "Earth":
             planet_text = f"{planet}: {color} ({current_sign})"
