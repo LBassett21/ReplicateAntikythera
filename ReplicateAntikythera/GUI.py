@@ -9,6 +9,10 @@ import time
 
 orbit_traces = {}
 
+def align_planets(t, direction, planets):
+    for p in planets:
+        p.align(t, direction)
+
 def scale(d):
     return (1/600-1/30)*d + 1
 
@@ -178,11 +182,16 @@ clock = pygame.time.Clock()
 
 sim_time = 0
 curr_time = time.time()
+
+align_planets(sim_time, [-1, 1, 0], list(planets.values()))
+
 while running:
+
     prev_time = curr_time
     curr_time = time.time()
     dt = curr_time - prev_time
     sim_time += (dt * (1/4))
+    curr_date = ref_date + timedelta(days = sim_time * solar_years_to_days)
 
     # Process events
     for event in pygame.event.get():
@@ -243,6 +252,7 @@ while running:
     #Draw the moon
     #pygame.draw.circle(screen, WHITE, (int(moon_x), int (moon_y)), moon_radius)
 
+
     # Draw the planets
     drawOrbit(planets["Mercury"], screen)
     drawSatellite(planets["Mercury"], sim_time, ORANGE, mercury_radius, screen)
@@ -281,6 +291,12 @@ while running:
     text_box.fill(BLACK)
     text_surface = key_font.render(f"Current Sign: {current_sign}", True, WHITE)
     text_box.blit(text_surface, (10, 5))
+
+
+    text_box = pygame.Surface((200, 30))
+    text_box.fill(BLACK)
+    text_surface = key_font.render(str(curr_date), True, WHITE)
+    text_box.blit(text_surface, (10, 20))
 
     screen.blit(text_box, (key_x, key_y + len(key_text) * key_padding))
 

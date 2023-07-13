@@ -2,6 +2,7 @@ from cgi import test
 from OrbitalDynamics import *
 from scipy.spatial.transform import Rotation
 from datetime import timedelta
+from math import *
 
 import GUI
 from Database import Database
@@ -10,6 +11,8 @@ from Database import Database
 primary: the satellite or planet around which the satellite orbits
 '''
 class Satellite:
+    f_offset = 0
+
     def __init__(self, orbit, primary):
         self.orbit = orbit
         self.primary = primary
@@ -18,22 +21,43 @@ class Satellite:
     Given sim time (t), compute the position of the satellite.
     The position has the form of a 3d vector (X, Y, Z) with units in AU with reference to the Sun (0, 0, 0).
     '''
-    def getPos(self, t):
+    def getPos(self, t=None, f=None):
         orbit = self.orbit
         primary = self.primary
 
-        f = orbit.tToF(t)
-        r = orbit.getDistance(t)
+        if(f==None):
+            f = orbit.tToF(t) + self.f_offset
+            r = orbit.getDistance(t)
+        else:
+            t = orbit.fToT(f + self.f_offset)
+            r = orbit.getDistance(t)
 
         pos = [r, 0, 0]
 
-        rot = Rotation.from_euler('ZXZ', [-orbit.La, orbit.i, orbit.w + math.degrees(f)], degrees = True)
+        rot = Rotation.from_euler('ZXZ', [-orbit.La, orbit.i, orbit.La + orbit.w + math.degrees(f)], degrees = True)
         pos = rot.apply(pos)
 
         if (primary != None):
             pos += primary.getPos(t)
 
         return pos
+
+    def align(self, t, direction):
+        """
+        t: the current time (sim time)
+
+        direction: the vector towards the desired position
+
+        f1: the current true anomaly
+        f2: the desired true anomaly
+
+        f_offset: f2 - f1
+        """
+
+        f1 = self.orbit.tToF(t)
+        f2 = atan2(-direction[1], direction[0]) - radians(self.orbit.w)
+
+        self.f_offset = f2 - f1
 
     def getPrimaryPos(self, t):
         if self.primary == None:
