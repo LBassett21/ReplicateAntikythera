@@ -9,6 +9,10 @@ import time
 
 orbit_traces = {}
 
+def align_planets(t, direction, planets):
+    for p in planets:
+        p.align(t, direction)
+
 def scale(d):
     return (1/600-1/30)*d + 1
 
@@ -177,7 +181,11 @@ clock = pygame.time.Clock()
 
 sim_time = 0
 curr_time = time.time()
+
+align_planets(sim_time, [-1, 1, 0], list(planets.values()))
+
 while running:
+
     prev_time = curr_time
     curr_time = time.time()
     dt = curr_time - prev_time
@@ -242,6 +250,7 @@ while running:
 
     #Draw the moon
     #pygame.draw.circle(screen, WHITE, (int(moon_x), int (moon_y)), moon_radius)
+
 
     # Draw the planets
     drawOrbit(planets["Mercury"], screen)
