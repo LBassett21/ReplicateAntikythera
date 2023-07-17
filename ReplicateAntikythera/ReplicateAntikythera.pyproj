@@ -11,6 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>ReplicateAntikythera</Name>
     <RootNamespace>ReplicateAntikythera</RootNamespace>
+    <TestFramework>unittest</TestFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Database.py" />
+    <Compile Include="Events_Databases.py" />
     <Compile Include="GUI.py" />
     <Compile Include="OrbitalDynamics.py">
       <SubType>Code</SubType>

@@ -193,7 +193,7 @@ while running:
     prev_time = curr_time
     curr_time = time.time()
     dt = curr_time - prev_time
-    #sim_time += (dt * (1/4))
+    sim_time += (dt * (1/4))
     curr_date = ref_date + timedelta(days = sim_time * solar_years_to_days)
 
     # Process events
