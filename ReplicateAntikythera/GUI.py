@@ -4,6 +4,9 @@ import pygame.font
 from datetime import datetime, timedelta
 import random
 import sys
+import webbrowser
+
+
 
 #Reference date
 ref_date = datetime(2023, 1, 4)
@@ -88,7 +91,8 @@ jupiter_mass = 2.5
 
 
 #Define the information for the key
-key_font = pygame.font.SysFont(None, 16) #font for the key
+key_font = pygame.font.SysFont(None, 36) #font for the key
+button_font = pygame.font.SysFont(None, 16)
 key_text = {
     "Sun": "Yellow",
     "Earth": "Blue",
@@ -100,15 +104,19 @@ key_text = {
     }
 
 pause_button_rect = pygame.Rect(width - 100, 10, 90, 30)
-pause_button_text = key_font.render("Pause", True, WHITE)
+pause_button_text = button_font.render("Pause", True, WHITE)
 
 paused = False;
 
 quit_button_rect = pygame.Rect(width - 200, 10, 90, 30)
-quit_button_text = key_font.render("Exit", True, WHITE)
+quit_button_text = button_font.render("Exit", True, WHITE)
 
 showstar_button_rect = pygame.Rect(width - 340, 10, 130, 30)
-showstar_button_text = key_font.render("StarSign Wheel", True, BLACK)
+showstar_button_text = button_font.render("StarSign Wheel", True, WHITE)
+
+github_button_rect = pygame.Rect(width - 440, 10, 90, 30)
+github_button_text = button_font.render("Github", True, WHITE)
+
 # Define asteroid belt properties
 asteroid_radius = 2
 asteroid_distance_min = 250
@@ -125,7 +133,8 @@ for _ in range(asteroid_count):
     asteroids.append((asteroid_distance, asteroid_speed, asteroid_angle))
 
 # Main game loop
-wheel = True
+startmenu = True
+wheel = False
 running = True
 clock = pygame.time.Clock()
 
@@ -205,6 +214,8 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if quit_button_rect.collidepoint(event.pos):
                 running = False
+            if github_button_rect.collidepoint(event.pos):
+                webbrowser.open('https://github.com/LBassett21/ReplicateAntikythera/tree/master')
             if pause_button_rect.collidepoint(event.pos):
                 paused = not paused
             if showstar_button_rect.collidepoint(event.pos):
@@ -226,34 +237,103 @@ while running:
             offset_x = zoom_center_x - scaled_mouse_x / zoom_scale
             offset_y = zoom_center_y - scaled_mouse_y / zoom_scale
 
-    if show_start_window:
+    
         
-        screen.blit(background_image, (0,0))
+        clock = pygame.time.Clock()
+
+        #create the locations of the stars for when we animate the background
+        star_field_slow = []
+        star_field_medium = []
+        star_field_fast = []
+
+        for slow_stars in range(50): #birth those plasma balls, baby
+            star_loc_x = random.randrange(0, width)
+            star_loc_y = random.randrange(0, height)
+            star_field_slow.append([star_loc_x, star_loc_y]) #i love your balls
+
+        for medium_stars in range(35):
+            star_loc_x = random.randrange(0, width)
+            star_loc_y = random.randrange(0, height)
+            star_field_medium.append([star_loc_x, star_loc_y])
+
+        for fast_stars in range(15):
+            star_loc_x = random.randrange(0, width)
+            star_loc_y = random.randrange(0, height)
+            star_field_fast.append([star_loc_x, star_loc_y])
+
+        #define some commonly used colours
+        WHITE = (255, 255, 255)
+        LIGHTGREY = (192, 192, 192)
+        DARKGREY = (128, 128, 128)
+        BLACK = (0, 0, 0)
+        RED = (255, 0, 0)
+        GREEN = (0, 255, 0)
+        BLUE = (0, 0, 255)
+        YELLOW = (255, 255, 0)
+        MAGENTA = (255, 0, 255)
+        CYAN = (0, 255, 255)
+                                        
+        #create the window
+        while show_start_window:
+            #need to move the button click event to under while loop as it refreshes with each iteration
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if show_start_window and Button_Start.rect.collidepoint(event.pos):
+                        show_start_window = False
+            
+            
+            screen.fill(BLACK)
+
+            #draw starts
+            for star in star_field_slow:
+                star[1] += 1
+                if star[1] > height:
+                    star[0] = random.randrange(0, width)
+                    star[1] = random.randrange(-20, -5)
+                pygame.draw.circle(screen, DARKGREY, star, 3)
+
+            for star in star_field_medium:
+                star[1] += 4
+                if star[1] > height:
+                    star[0] = random.randrange(0, width)
+                    star[1] = random.randrange(-20, -5)
+                pygame.draw.circle(screen, LIGHTGREY, star, 2)
+
+            for star in star_field_fast:
+                star[1] += 8
+                if star[1] > height:
+                    star[0] = random.randrange(0, width)
+                    star[1] = random.randrange(-20, -5)
+                pygame.draw.circle(screen, YELLOW, star, 1)
+            
+            pygame.event.pump()
+            
+            #hover effect for start button
+            for option in options:
+                if option.rect.collidepoint(pygame.mouse.get_pos()):
+                    option.hovered = True
+                else:
+                    option.hovered = False
+                option.draw()
+
+
+            # Draw the title
+            title_font = pygame.font.SysFont("Arial", 80, bold=True)
+            title_text = title_font.render("Replicate Antikythera", True, WHITE)
+            title_text_rect = title_text.get_rect(center=(width // 2, height // 2 - 50))
+            screen.blit(title_text, title_text_rect)
+            #redraw everything we've asked pygame to draw
+               #set frames per second
+            clock.tick(30)
+            pygame.display.flip()
+            continue
+         
+
+            
        
-        pygame.event.pump()
-        for option in options:
-            if option.rect.collidepoint(pygame.mouse.get_pos()):
-                option.hovered = True
-            else:
-                option.hovered = False
-            option.draw()
         
 
-        # Draw the title
-        title_font = pygame.font.SysFont("Arial", 80, bold=True)
-        title_text = title_font.render("Replicate Antikythera", True, WHITE)
-        title_text_rect = title_text.get_rect(center=(width // 2, height // 2 - 50))
-        screen.blit(title_text, title_text_rect)
-
-        # Draw the start button
-        #button_font = pygame.font.SysFont("Arial", 36)
-        #button_text = button_font.render("START", True, WHITE)
-        #button_rect = pygame.Rect(width // 2 - 75, height // 2 + 20, 150, 50)
-        #pygame.draw.rect(screen, (50, 50, 50), button_rect)
-        #screen.blit(button_text, button_rect.move(30, 5))
-
-        pygame.display.flip()
-        continue
+       
 
     # Move/Offset the screen if dragging is true
     if dragging:
@@ -264,6 +344,8 @@ while running:
 
     if not paused:
     # Update planet positions
+        
+
         scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 
         earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
@@ -298,8 +380,8 @@ while running:
     # Calculate the zodiac line endpoints
     for i in range(12):  # Assuming there are 12 zodiac signs
         angle = (i * math.pi / 6)  # Angle for each zodiac sign
-        line_x = earth_x + math.cos(angle) * 400  # Adjust the length of the lines as needed
-        line_y = earth_y + math.sin(angle) * 400
+        line_x = earth_x + math.cos(angle) * 300  # Adjust the length of the lines as needed
+        line_y = earth_y + math.sin(angle) * 300
         zodiac_line_points.append((line_x, line_y))
 
     scaled_screen.blit(scaled_background_image, (0, 0))
@@ -330,6 +412,7 @@ while running:
     current_sign_index = int((earth_angle / (2 * math.pi)) * len(zodiac_signs)) % len(zodiac_signs)
     current_sign = zodiac_signs[current_sign_index]
 
+    
     text_box = pygame.Surface((200, 30))
     text_box.fill(BLACK)
     text_surface = key_font.render(f"Current Sign: {current_sign}", True, WHITE)
@@ -355,28 +438,73 @@ while running:
     # Update the display with the scaled screen
     screen.blit(pygame.transform.scale(scaled_screen, (width, height)), (0, 0))
 
-    pygame.draw.rect(screen, RED, showstar_button_rect)
-    screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
-    # Add a pause button on top of the scaled screen
-    pygame.draw.rect(screen, RED, pause_button_rect, 1)
-    screen.blit(pause_button_text, (pause_button_rect.x, pause_button_rect.y))
-
+    
+#changing buttons based on if they are clicked or not    
+    if showstar_button_rect == False:
+        pygame.draw.rect(screen, BLUE, showstar_button_rect)
+        screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
+    else:
+        pygame.draw.rect(screen, BLUE, showstar_button_rect, 1)
+        screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
+    
+    if paused:
+        pygame.draw.rect(screen, BLUE, pause_button_rect)
+        screen.blit(pause_button_text, pause_button_rect.move(30,10))
+    else:
+        pygame.draw.rect(screen, BLUE, pause_button_rect, 1)
+        screen.blit(pause_button_text, pause_button_rect.move(30,10))
     # Add a exit button on top of the scaled screen
-    pygame.draw.rect(screen, RED, quit_button_rect, 1)
-    screen.blit(quit_button_text, (quit_button_rect.x, quit_button_rect.y))
+    pygame.draw.rect(screen, BLUE, quit_button_rect, 1)
+    screen.blit(quit_button_text, quit_button_rect.move(30,10))
 
+    pygame.draw.rect(screen, BLUE, github_button_rect, 1)
+    screen.blit(github_button_text, github_button_rect.move(30,10))
     #Draw the key
     
    
-   
+    
     if wheel: 
+        pygame.draw.rect(screen, BLUE, showstar_button_rect)
+        screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
+
+        triangle0 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[0]), (zodiac_line_points[1]))
+        pygame.draw.polygon(screen, WHITE, triangle0, 1)
+        triangle1 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[1]), (zodiac_line_points[2]))
+        pygame.draw.polygon(screen, WHITE, triangle1, 1)
+        triangle2 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[2]), (zodiac_line_points[3]))
+        pygame.draw.polygon(screen, WHITE, triangle2, 1)
+        triangle3 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[3]), (zodiac_line_points[4]))
+        pygame.draw.polygon(screen, WHITE, triangle3, 1)
+        triangle4 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[4]), (zodiac_line_points[5]))
+        pygame.draw.polygon(screen, WHITE, triangle4, 1)
+        triangle5 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[5]), (zodiac_line_points[6]))
+        pygame.draw.polygon(screen, WHITE, triangle5, 1)
+        triangle6 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[6]), (zodiac_line_points[7]))
+        pygame.draw.polygon(screen, WHITE, triangle6, 1)
+        triangle7 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[7]), (zodiac_line_points[8]))
+        pygame.draw.polygon(screen, WHITE, triangle7, 1)
+        triangle8 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[8]), (zodiac_line_points[9]))
+        pygame.draw.polygon(screen, WHITE, triangle8, 1)
+        triangle9 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[9]), (zodiac_line_points[10]))
+        pygame.draw.polygon(screen, WHITE, triangle9, 1)
+        triangle10 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[10]), (zodiac_line_points[11]))
+        pygame.draw.polygon(screen, WHITE, triangle10, 1)
+        triangle11 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[11]), (zodiac_line_points[0]))
+        pygame.draw.polygon(screen, WHITE, triangle11, 1)
+        
+        
+        special_font = pygame.font.SysFont(None, 60)
+        text1_surface = special_font.render(f"{current_sign}", True, RED)
+       # screen.blit(text1_surface, (width // 2 - 100, height // 2 ))
+        screen.blit(text1_surface, ((zodiac_line_points[current_sign_index])))
+        
         if current_sign_index > 0:
             triangle = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[current_sign_index]), (zodiac_line_points[current_sign_index - 1]))
-            pygame.draw.polygon(screen, TRANSPARENTBLUE, triangle, 2)
+            pygame.draw.polygon(screen, RED, triangle, 2)
             #pygame.draw.line(screen, TRANSPARENTBLUE, ( (int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[current_sign_index])))
         else: 
             triangle = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[current_sign_index]), (zodiac_line_points[current_sign_index - 1]))
-            pygame.draw.polygon(screen, TRANSPARENTBLUE, triangle, 2)
+            pygame.draw.polygon(screen, RED, triangle, 2)
     
 
     for i, (planet, color) in enumerate(key_text.items()):
