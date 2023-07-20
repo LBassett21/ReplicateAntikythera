@@ -21,11 +21,14 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Database.py" />
+    <Compile Include="Events_Databases.py" />
     <Compile Include="GUI.py" />
     <Compile Include="OrbitalDynamics.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ReplicateAntikythera.py" />
+    <Compile Include="Tests.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
