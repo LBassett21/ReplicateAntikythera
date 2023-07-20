@@ -1,17 +1,60 @@
 import pygame
 import math
 import pygame.font
-from datetime import datetime, timedelta
+from datetime import *
 import random
-import sys
-import webbrowser
+from OrbitalDynamics import *
+from ReplicateAntikythera import *
+import time
 
+orbit_traces = {}
 
+def align_planets(t, direction, planets):
+    for p in planets:
+        p.align(t, direction)
+
+def scale(d):
+    return (1/600-1/30)*d + 1
+
+def drawOrbit(planet, surface, sim_time = 0, sample_points = 250, use_cache = True):
+    if planet in orbit_traces and use_cache:
+        orbit_trace = orbit_traces[planet]
+    else:
+        orbit_trace = pygame.Surface((width, height), pygame.SRCALPHA)
+        points = []
+        num_points = sample_points
+        for i in range(0, num_points):
+            t = i * (planet.orbit.T / num_points)
+            pos = (planet.getPos(t)) * px_per_au
+            point = (pos[0] + width / 2, pos[1] + height / 2)
+            points.append(point)
+        pygame.draw.polygon(orbit_trace, pygame.Color(255, 255, 255), points, 1)
+        if use_cache:
+            orbit_traces[planet] = orbit_trace
+
+    primary_pos = planet.getPrimaryPos(sim_time)
+    offset_x = (primary_pos[0] * px_per_au) 
+    offset_y = (primary_pos[1] * px_per_au)
+
+    surface.blit(orbit_trace, (offset_x, offset_y))
+
+def drawSatellite(sat, sim_time, color, radius, surface):
+    pos_x = width/2 + sat.getPrimaryPos(sim_time)[0] + sat.getPos(sim_time)[0] * px_per_au
+    pos_y = height/2 + sat.getPrimaryPos(sim_time)[1] + sat.getPos(sim_time)[1] * px_per_au
+    pygame.draw.circle(surface, color, (pos_x, pos_y), radius)
+
+db = Database()
+db.initDatabase()
 
 #Reference date
 ref_date = datetime(2023, 1, 4)
+
+# AU to px conversion
+px_per_au = 100
+
 current_date = ref_date
 TRANSPARENTBLUE = pygame.Color(173, 216, 230, 255)
+
 # Initialize Pygame
 pygame.init()
 
@@ -22,8 +65,8 @@ pygame.display.set_caption("Replicate Antikythera") #title
 
 # Start window surface definition
 start_window = pygame.Surface((width, height))
-start_font = pygame.font.SysFont("Arial", 36)
-title_font = pygame.font.SysFont("Arial", 80)
+start_font = pygame.font.SysFont(None, 36)
+title_font = pygame.font.SysFont(None, 80)
 # Imports background image to program
 background_image = pygame.image.load("starry_night.jpg")
 background_image = pygame.transform.smoothscale(background_image, (width,height))
@@ -48,6 +91,7 @@ PURPLE = (128, 0, 128)
 WHITE = (255, 255, 255)
 
 # Define planet properties
+"""
 sun_radius = 30
 sun_pos = (width // 2, height // 2)
 sun_mass = 1000
@@ -63,7 +107,6 @@ moon_distance = 30
 moon_speed = -0.1
 moon_angle = 0
 moon_mass = 0.2
-
 
 mars_radius = 7
 mars_distance = 300
@@ -88,11 +131,11 @@ jupiter_distance = 400
 jupiter_speed = -0.008
 jupiter_angle = 0
 jupiter_mass = 2.5
-
+"""
 
 #Define the information for the key
-key_font = pygame.font.SysFont("Arial", 36) #font for the key
-button_font = pygame.font.SysFont("Arial", 16)
+key_font = pygame.font.SysFont(None, 36) #font for the key
+button_font = pygame.font.SysFont(None, 16)
 key_text = {
     "Sun": "Yellow",
     "Earth": "Blue",
@@ -102,6 +145,23 @@ key_text = {
     "Mercury": "Orange",
     "Jupiter": "Purple"
     }
+
+planets = {
+    "Mercury": Planet(Orbit.fromDb("Mercury", db)),
+    "Venus": Planet(Orbit.fromDb("Venus", db)),
+    "Earth" : Planet(Orbit.fromDb("Earth", db)),
+    "Mars": Planet(Orbit.fromDb("Mars", db)),
+    #"Jupiter": Planet(Orbit.fromDb("Jupiter", db)),
+    #"Saturn": Planet(Orbit.fromDb("Saturn", db)),
+    #"Uranus": Planet(Orbit.fromDb("Uranus", db)),
+    "Neptune": Planet(Orbit.fromDb("Neptune", db))
+}
+
+moons = {
+    "Moon": Moon(Orbit.fromDb("Moon", db), planets["Earth"])
+}
+
+moons["Moon"].orbit.a = 0.2
 
 pause_button_rect = pygame.Rect(width - 100, 10, 90, 30)
 pause_button_text = button_font.render("Pause", True, WHITE)
@@ -167,7 +227,7 @@ class Option:
     def set_rend(self):
         self.rend = start_font.render(self.text, True, self.get_color())
    
-        #start_font = pygame.font.SysFont("Arial", 36)
+        #start_font = pygame.font.SysFont(None, 36)
     def get_color(self):
         if self.hovered:
             return (255, 255, 255)
@@ -186,10 +246,17 @@ Button_Start = Option("Press START to begin",((width // 2) , height // 2))
 #storing hovertexts in array called options
 options = [Button_Start]
 
+clock = pygame.time.Clock()
+
 time_delta = 0
 sim_time = 0
-
+p
 while running:
+	time_delta = clock.tick(60) / 1000.0
+	
+	if not paused:
+		sim_time += time_delta
+
     # Scale the screen
     
     scaled_width = int(width * zoom_scale)
@@ -216,7 +283,8 @@ while running:
             if quit_button_rect.collidepoint(event.pos):
                 running = False
             if github_button_rect.collidepoint(event.pos):
-                webbrowser.open('https://github.com/LBassett21/ReplicateAntikythera/tree/master')
+                pass
+                # webbrowser.open('https://github.com/LBassett21/ReplicateAntikythera/tree/master')
             if pause_button_rect.collidepoint(event.pos):
                 paused = not paused
             if showstar_button_rect.collidepoint(event.pos):
@@ -237,8 +305,6 @@ while running:
             zoom_scale /= 1.05
             offset_x = zoom_center_x - scaled_mouse_x / zoom_scale
             offset_y = zoom_center_y - scaled_mouse_y / zoom_scale
-
-        clock = pygame.time.Clock()
 
         #create the locations of the stars for when we animate the background
         star_field_slow = []
@@ -326,27 +392,21 @@ while running:
             clock.tick(30)
             pygame.display.flip()
             continue
-         
-
-            
        
-        
-
-       
-
     # Move/Offset the screen if dragging is true
     if dragging:
         offset_x += mouse_x - prev_mouse_x
         offset_y += mouse_y - prev_mouse_y
     prev_mouse_x = mouse_x
     prev_mouse_y = mouse_y
+	
+	scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
+	
+	"""
 
     if not paused:
     # Update planet positions
-        
-
-        scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
-
+		
         earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
         earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
         earth_angle += earth_speed
@@ -370,8 +430,8 @@ while running:
         jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
         jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
         jupiter_angle += jupiter_speed
-
-    
+	
+	"""
 
     # Clear the line positions
         zodiac_line_points.clear()
@@ -386,18 +446,33 @@ while running:
     scaled_screen.blit(scaled_background_image, (0, 0))
 
     # Draw the sun
-    pygame.draw.circle(scaled_screen, YELLOW, (int(scaled_sun_pos[0]),int(scaled_sun_pos[1])), int(sun_radius//zoom_scale))
+    # pygame.draw.circle(scaled_screen, YELLOW, (int(scaled_sun_pos[0]),int(scaled_sun_pos[1])), int(sun_radius//zoom_scale))
 
     #Draw the moon
-    pygame.draw.circle(scaled_screen, WHITE, (int(moon_x), int (moon_y)),int(moon_radius//zoom_scale))
+    # pygame.draw.circle(scaled_screen, WHITE, (int(moon_x), int (moon_y)),int(moon_radius//zoom_scale))
 
     # Draw the planets
+	
+    drawOrbit(planets["Mercury"], scaled_screen)
+    drawSatellite(planets["Mercury"], sim_time, ORANGE, mercury_radius, scaled_screen)
+    drawOrbit(planets["Venus"], scaled_screen)
+    drawSatellite(planets["Venus"], sim_time, GREEN, venus_radius, scaled_screen)
+    drawOrbit(planets["Earth"], scaled_screen)
+    drawSatellite(planets["Earth"], sim_time, BLUE, earth_radius, scaled_screen)
+    #drawOrbit(moons["Moon"], screen, sim_time)
+    drawSatellite(moons["Moon"], sim_time, WHITE, moon_radius, scaled_screen)
+    drawOrbit(planets["Mars"], scaled_screen)
+    drawSatellite(planets["Mars"], sim_time, RED, mars_radius, scaled_screen)
+    drawOrbit(planets["Neptune"], scaled_screen)
+    drawSatellite(planets["Neptune"], sim_time, BLUE, neptune_radius, scaled_screen)
+	
+	"""
     pygame.draw.circle(scaled_screen, BLUE, (int(earth_x), int(earth_y)), int(earth_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, RED, (int(mars_x), int(mars_y)), int(mars_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, GREEN, (int(venus_x), int(venus_y)), int(venus_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, ORANGE, (int(mercury_x), int(mercury_y)),int(mercury_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, PURPLE, (int(jupiter_x), int(jupiter_y)),int(jupiter_radius//zoom_scale))
-
+	"""
 
     key_x =10
     key_y = 10
@@ -492,7 +567,7 @@ while running:
         pygame.draw.polygon(screen, WHITE, triangle11, 1)
         
         
-        special_font = pygame.font.SysFont("Arial", 60)
+        special_font = pygame.font.SysFont(None, 60)
         text1_surface = special_font.render(f"{current_sign}", True, RED)
        # screen.blit(text1_surface, (width // 2 - 100, height // 2 ))
         screen.blit(text1_surface, ((zodiac_line_points[current_sign_index])))
@@ -515,9 +590,6 @@ while running:
         screen.blit(key_surface, (key_x, key_y + i * key_padding))
    
     pygame.display.flip()
-
-    time_delta = clock.tick(60) / 1000.0
-    sim_time = time_delta
 
 # Quit the game
 pygame.quit()
