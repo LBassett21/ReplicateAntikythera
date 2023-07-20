@@ -1,0 +1,12 @@
+{
+  "button": {
+    "font": {
+      "name": "arial",
+      "size":  "12",
+      "regular_resource": {
+        "package": "pygame",
+        "resource": "arial"
+      }
+    }
+  }
+}

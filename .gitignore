@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/PygameGUITest/PygameGUITest.pyproj
+/PygameGUITest/PygameGUITest.py
+/PygameGUITest/LayoutDemo.py
+/PygameGUITest/ButtonDemo.py
