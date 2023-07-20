@@ -151,9 +151,9 @@ planets = {
     "Venus": Planet(Orbit.fromDb("Venus", db)),
     "Earth" : Planet(Orbit.fromDb("Earth", db)),
     "Mars": Planet(Orbit.fromDb("Mars", db)),
-    #"Jupiter": Planet(Orbit.fromDb("Jupiter", db)),
-    #"Saturn": Planet(Orbit.fromDb("Saturn", db)),
-    #"Uranus": Planet(Orbit.fromDb("Uranus", db)),
+    "Jupiter": Planet(Orbit.fromDb("Jupiter", db)),
+    "Saturn": Planet(Orbit.fromDb("Saturn", db)),
+    "Uranus": Planet(Orbit.fromDb("Uranus", db)),
     "Neptune": Planet(Orbit.fromDb("Neptune", db))
 }
 
@@ -402,7 +402,7 @@ while running:
 	
 	scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 	
-	"""
+	
 
     if not paused:
     # Update planet positions
@@ -431,7 +431,7 @@ while running:
         jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
         jupiter_angle += jupiter_speed
 	
-	"""
+	
 
     # Clear the line positions
         zodiac_line_points.clear()
@@ -592,4 +592,4 @@ while running:
     pygame.display.flip()
 
 # Quit the game
-pygame.quit()
+    pygame.quit()
