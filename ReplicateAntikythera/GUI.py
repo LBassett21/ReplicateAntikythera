@@ -22,8 +22,8 @@ pygame.display.set_caption("Replicate Antikythera") #title
 
 # Start window surface definition
 start_window = pygame.Surface((width, height))
-start_font = pygame.font.SysFont('Comic Sans', 36)
-title_font = pygame.font.SysFont('Comic Sans', 80)
+start_font = pygame.font.SysFont(None, 36)
+title_font = pygame.font.SysFont(None, 80)
 # Imports background image to program
 background_image = pygame.image.load("starry_night.jpg")
 background_image = pygame.transform.smoothscale(background_image, (width,height))
@@ -83,7 +83,7 @@ mercury_speed = -0.04
 mercury_angle = 0
 mercury_mass = 0.4
 
-jupiter_radius = 20
+jupiter_radius = 20 
 jupiter_distance = 400
 jupiter_speed = -0.008
 jupiter_angle = 0
@@ -91,8 +91,8 @@ jupiter_mass = 2.5
 
 
 #Define the information for the key
-key_font = pygame.font.SysFont('Comic Sans', 36) #font for the key
-button_font = pygame.font.SysFont('Comic Sans', 16)
+key_font = pygame.font.SysFont(None, 36) #font for the key
+button_font = pygame.font.SysFont(None, 16)
 key_text = {
     "Sun": "Yellow",
     "Earth": "Blue",
@@ -103,8 +103,18 @@ key_text = {
     "Jupiter": "Purple"
     }
 
+fastforward_button_rect = pygame.Rect(width // 2 + 55, height - 100, 70, 30)
+fastforward_button_text = button_font.render("--->    ", True, WHITE)
+
+slowdown_button_rect = pygame.Rect(width // 2 - 125, height - 100, 70, 30)
+slowdown_button_text = button_font.render("<---    ", True, WHITE)
+
 pause_button_rect = pygame.Rect(width - 100, 10, 90, 30)
 pause_button_text = button_font.render("Pause", True, WHITE)
+
+
+pause_button_rect1 = pygame.Rect(width // 2 - 45, height - 100, 90, 30)
+pause_button_text1 = button_font.render("Pause", True, WHITE)
 
 paused = False;
 
@@ -133,7 +143,7 @@ for _ in range(asteroid_count):
     asteroids.append((asteroid_distance, asteroid_speed, asteroid_angle))
 
 # Main game loop
-startmenu = True
+time = 0
 wheel = False
 running = True
 clock = pygame.time.Clock()
@@ -167,7 +177,7 @@ class Option:
     def set_rend(self):
         self.rend = start_font.render(self.text, True, self.get_color())
    
-        #start_font = pygame.font.SysFont('Comic Sans', 36)
+        #start_font = pygame.font.SysFont(None, 36)
     def get_color(self):
         if self.hovered:
             return (255, 255, 255)
@@ -179,7 +189,7 @@ class Option:
         self.rect = self.rend.get_rect()
         self.rect.center = self.pos
 
-show_start_window = True
+
 
 Button_Start = Option("Press START to begin",((width // 2) , height // 2))
 
@@ -216,10 +226,20 @@ while running:
                 running = False
             if github_button_rect.collidepoint(event.pos):
                 webbrowser.open('https://github.com/LBassett21/ReplicateAntikythera/tree/master')
+            if fastforward_button_rect.collidepoint(event.pos):
+                print("fastforward")
             if pause_button_rect.collidepoint(event.pos):
+                paused = not paused
+            if pause_button_rect1.collidepoint(event.pos): #other pause button
                 paused = not paused
             if showstar_button_rect.collidepoint(event.pos):
                 wheel = not wheel
+            if fastforward_button_rect.collidepoint(event.pos):
+                if time < 5:
+                    time = time + 1
+            if slowdown_button_rect.collidepoint(event.pos):
+                if time > -5:
+                    time = time - 1
             elif show_start_window and Button_Start.rect.collidepoint(event.pos):
                 show_start_window = False
             elif not dragging:
@@ -246,10 +266,10 @@ while running:
         star_field_medium = []
         star_field_fast = []
 
-        for slow_stars in range(50): #birth those plasma balls, baby
+        for slow_stars in range(50): 
             star_loc_x = random.randrange(0, width)
             star_loc_y = random.randrange(0, height)
-            star_field_slow.append([star_loc_x, star_loc_y]) #i love your balls
+            star_field_slow.append([star_loc_x, star_loc_y]) 
 
         for medium_stars in range(35):
             star_loc_x = random.randrange(0, width)
@@ -305,6 +325,7 @@ while running:
                     star[0] = random.randrange(0, width)
                     star[1] = random.randrange(-20, -5)
                 pygame.draw.circle(screen, YELLOW, star, 1)
+            
             
             pygame.event.pump()
             
@@ -450,9 +471,24 @@ while running:
     if paused:
         pygame.draw.rect(screen, BLUE, pause_button_rect)
         screen.blit(pause_button_text, pause_button_rect.move(30,10))
-    else:
+
+        pygame.draw.rect(screen, BLUE, pause_button_rect1)
+        screen.blit(pause_button_text1, pause_button_rect1.move(30,10))
+    else: #drawing both pause buttons here 
         pygame.draw.rect(screen, BLUE, pause_button_rect, 1)
         screen.blit(pause_button_text, pause_button_rect.move(30,10))
+
+        pygame.draw.rect(screen, BLUE, pause_button_rect1, 1)
+        screen.blit(pause_button_text1, pause_button_rect1.move(30,10))
+    
+   
+    pygame.draw.rect(screen, BLUE, fastforward_button_rect, 1)
+    screen.blit(fastforward_button_text, fastforward_button_rect.move(30,10))
+    pygame.draw.rect(screen, BLUE, slowdown_button_rect, 1)
+    screen.blit(slowdown_button_text, slowdown_button_rect.move(30,10))
+    
+    
+    # Add a exit button on top of the scaled screen
     # Add a exit button on top of the scaled screen
     pygame.draw.rect(screen, BLUE, quit_button_rect, 1)
     screen.blit(quit_button_text, quit_button_rect.move(30,10))
@@ -460,6 +496,8 @@ while running:
     pygame.draw.rect(screen, BLUE, github_button_rect, 1)
     screen.blit(github_button_text, github_button_rect.move(30,10))
     #Draw the key
+    text_surface_time = key_font.render(f"{time}x", True, BLUE)
+    screen.blit(text_surface_time, (width // 2 - 10, height - 130))
     
    
     
@@ -493,8 +531,10 @@ while running:
         pygame.draw.polygon(screen, WHITE, triangle11, 1)
         
         
-        special_font = pygame.font.SysFont('Comic Sans', 60)
+        special_font = pygame.font.SysFont(None, 60)
         text1_surface = special_font.render(f"{current_sign}", True, RED)
+        
+    
        # screen.blit(text1_surface, (width // 2 - 100, height // 2 ))
         screen.blit(text1_surface, ((zodiac_line_points[current_sign_index])))
         
