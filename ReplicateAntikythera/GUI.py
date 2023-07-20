@@ -7,7 +7,7 @@ import sys
 import webbrowser
 
 
-
+time = 0
 #Reference date
 ref_date = datetime(2023, 1, 4)
 current_date = ref_date
@@ -54,7 +54,7 @@ sun_mass = 1000
 
 earth_radius = 10
 earth_distance = 200
-earth_speed = -0.02
+earth_speed = -0.02 
 earth_angle = 0
 earth_mass = 1
 
@@ -79,7 +79,7 @@ venus_mass = 0.6
 
 mercury_radius = 6
 mercury_distance = 120
-mercury_speed = -0.04
+mercury_speed = -0.04 
 mercury_angle = 0
 mercury_mass = 0.4
 
@@ -143,7 +143,7 @@ for _ in range(asteroid_count):
     asteroids.append((asteroid_distance, asteroid_speed, asteroid_angle))
 
 # Main game loop
-time = 0
+
 wheel = False
 running = True
 clock = pygame.time.Clock()
@@ -257,14 +257,26 @@ while running:
             offset_x = zoom_center_x - scaled_mouse_x / zoom_scale
             offset_y = zoom_center_y - scaled_mouse_y / zoom_scale
 
-    
-        
+        if time != 0:
+            earth_speed = -0.02 * time
+            mars_speed = -0.01 * time
+            venus_speed = -0.03 * time
+            mercury_speed = -.04 * time
+            jupiter_speed = -.008 * time
+        elif time == 0:
+            earth_speed = -0.02 
+            mars_speed = -0.01 
+            venus_speed = -0.03 
+            mercury_speed = -.04 
+            jupiter_speed = -.008 
+
         clock = pygame.time.Clock()
 
         #create the locations of the stars for when we animate the background
         star_field_slow = []
         star_field_medium = []
         star_field_fast = []
+        star_field_elon = []
 
         for slow_stars in range(50): 
             star_loc_x = random.randrange(0, width)
@@ -280,6 +292,11 @@ while running:
             star_loc_x = random.randrange(0, width)
             star_loc_y = random.randrange(0, height)
             star_field_fast.append([star_loc_x, star_loc_y])
+        
+        for elon_stars in range(1):
+            star_loc_x = random.randrange(0, 100000)
+            star_loc_y = random.randrange(0, 100000)
+            star_field_elon.append([star_loc_x, star_loc_y])
 
         #define some commonly used colours
         WHITE = (255, 255, 255)
@@ -325,7 +342,15 @@ while running:
                     star[0] = random.randrange(0, width)
                     star[1] = random.randrange(-20, -5)
                 pygame.draw.circle(screen, YELLOW, star, 1)
+            image = pygame.image.load('elon.png')
             
+            #rare elon must car
+            for star in star_field_elon:
+                star[1] += 8
+                if star[1] > height:
+                    star[0] = random.randrange(0, 10000)
+                    star[1] = random.randrange(-20, -5)
+                screen.blit(image,(star))
             
             pygame.event.pump()
             
