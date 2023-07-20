@@ -3,9 +3,7 @@ import pygame
 from pygame_gui import UIManager, UI_TEXT_ENTRY_CHANGED
 from pygame_gui.elements import UIWindow, UITextEntryBox, UITextBox
 
-
 pygame.init()
-
 
 pygame.display.set_caption('Pygame Notepad')
 window_surface = pygame.display.set_mode((800, 600))
