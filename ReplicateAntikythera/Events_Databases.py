@@ -27,13 +27,33 @@ class Events():
         )
 
         self.addComet(1, "Halley's Comet", "Sun", 17.737, 0.96658, 161.96, 59.396, 112.05, 74.7 / solar_years_to_days, "2061-07-28", "2474040.5")
-        self.addComet(2, "Hyakutake", "Sun", 1700, 0.9998946, 124.92246, 188.05766, 130.17218, 17000 / solar_years_to_days, "1996-05-1", "2450400.5")
-        self.addComet(3, "Halley's Comet", "Sun", 17.737, 0.96658, 161.96, 59.396, 112.05, 74.7 / solar_years_to_days, "2061-07-28", "2474040.5")
+        self.addComet(2, "Hyakutake", "Sun", 1700, 0.9998946, 124.92246, 188.05766, 130.17218, 17000 / solar_years_to_days, "1996-05-01", "2450400.5")
+        self.addComet(3, "Hale-Bopp", "Sun", 177, 0.99498, 89.3, 282.47, 130.41, 2520 * solar_years_to_days, "4385-04-01", "JD 2459837.5")
+        self.addComet(4, "Comet Borrelly", "Sun", 3.61, 0.6377, 29.3, 74.31, 351.86, 6.85 * solar_years_to_days, "2028-12-11", "JD 2459800.5")
+        self.addComet(5, "Comet Encke", "Sun", 2.2195, 0.8471, 11.35, 334.03, 187.2, 3.31 * solar_years_to_days, "2023-10-22", "2023-02-25")
 
         self.database.commit()
 
+    def initAlignment(self):
+        self.openDatabase()
+
+        self.dbcursor.execute("DROP TABLE IF EXISTS ALIGNMENT")
+        self.dbcursor.execute("""CREATE TABLE IF NOT EXISTS ALIGNMENT (
+             ID INTEGER PRIMARY KEY NOT NULL,
+             mercury TEXT NOT NULL,
+             venus TEXT NOT NULL,
+             earth TEXT NOT NULL,
+             mars TEXT NOT NULL,
+             jupiter TEXT NOT NULL,
+             neptune TEXT NOT NULL,
+             moon TEXT NOT NULL,
+             )"""
+        )
+
     def initSolarEclipses(self):
         self.openDatabase()
+
+        self.dbcursor.execute("DROP TABLE IF EXISTS SOLAR_ECLIPSES")
         self.dbcursor.execute("""CREATE TABLE IF NOT EXISTS SOLAR_ECLIPSES (
              ID INTEGER PRIMARY KEY NOT NULL,
              date_observed DATETIME NOT NULL,
@@ -43,14 +63,18 @@ class Events():
              )"""
         )
         
-        self.addSolarEclipse(1, "2001-06-21", "Total", 127 * saros_to_days, "4:57")
-        self.addSolarEclipse(2, "2001-12-14", "Annular", 132 * saros_to_days, "3:53")
-        self.addSolarEclipse(3, "2002-06-10", "Annular", 137 * saros_to_days, "0:23")
-        self.addSolarEclipse(4, "2002-12-04", "Total", 142 * saros_to_days, "2:04")
-        self.addSolarEclipse(5, "2003-05-31", "Annular", 147 * saros_to_days, "3:37")
+        self.addSolarEclipse(1, "2001-06-21", "Total", 127 * saros_to_days, "4.57")
+        self.addSolarEclipse(2, "2001-12-14", "Annular", 132 * saros_to_days, "3.53")
+        self.addSolarEclipse(3, "2002-06-10", "Annular", 137 * saros_to_days, "0.23")
+        self.addSolarEclipse(4, "2002-12-04", "Total", 142 * saros_to_days, "2.04")
+        self.addSolarEclipse(5, "2003-05-31", "Annular", 147 * saros_to_days, "3.37")
+
+        self.database.commit()
 
     def initLunarEclipses(self):
         self.openDatabase()
+
+        self.dbcursor.execute("DROP TABLE IF EXISTS LUNAR_ECLIPSES")
         self.dbcursor.execute("""CREATE TABLE IF NOT EXISTS LUNAR_ECLIPSES (
              ID INTEGER PRIMARY KEY NOT NULL,
              date_observed DATETIME NOT NULL,
@@ -60,15 +84,19 @@ class Events():
              )"""
         )
 
-        self.addLunarEclipse(1, "1999-07-28", "Partial", 119 * saros_to_days, "144:00")
-        self.addLunarEclipse(2, "2000-01-21", "Total", 124 * saros_to_days, "78:00")
-        self.addLunarEclipse(3, "2000-07-16", "Total", 129 * saros_to_days, "106:00")
-        self.addLunarEclipse(4, "2001-01-09", "Total", 134 * saros_to_days, "62:00")
-        self.addLunarEclipse(5, "2001-07-05", "Partial", 139 * saros_to_days, "160:00")
+        self.addLunarEclipse(1, "1999-07-28", "Partial", 119 * saros_to_days, "144.00")
+        self.addLunarEclipse(2, "2000-01-21", "Total", 124 * saros_to_days, "78.00")
+        self.addLunarEclipse(3, "2000-07-16", "Total", 129 * saros_to_days, "106.00")
+        self.addLunarEclipse(4, "2001-01-09", "Total", 134 * saros_to_days, "62.00")
+        self.addLunarEclipse(5, "2001-07-05", "Partial", 139 * saros_to_days, "160.00")
+
+        self.database.commit()
 
     # Only includes major NASA space launches
     def initSpaceLaunches(self):
         self.openDatabase()
+
+        self.dbcursor.execute("DROP TABLE IF EXISTS SPACE_LAUNCHES")
         self.dbcursor.execute("""CREATE TABLE IF NOT EXISTS SPACE_LAUNCHES (
              ID INTEGER PRIMARY KEY NOT NULL,
              name TEXT NOT NULL,
@@ -89,6 +117,8 @@ class Events():
         self.addSpaceLaunch(9, "Commercial Crew Program", "2011", "(Present)", "Current program (as of 2023) to shuttle Americans to the ISS")
         self.addSpaceLaunch(10, "Artemis Program", "2017", "(Present)", "Current program (as of 2023) to bring humans to the Moon again")
 
+        self.database.commit()
+
 
     def openDatabase(self):
         self.database = sqlite3.connect("antikythera_database.db")
@@ -105,7 +135,7 @@ class Events():
         self.dbcursor.execute(
            f"""
             INSERT INTO COMETS VALUES(
-            "{ID}",
+            {ID},
             "{name}",
             "{orbital_primary}",
             {a},
@@ -124,11 +154,11 @@ class Events():
         self.dbcursor.execute(
            f"""
             INSERT INTO SOLAR_ECLIPSES VALUES(
-            "{ID}",
+            {ID},
             "{date_observed}",
             "{type}",
             {saros},
-            {duration}
+            "{duration}"
             )
            """
         )
@@ -141,31 +171,56 @@ class Events():
             "{date_observed}",
             "{type}",
             {saros},
-            {duration}
+            "{duration}"
             )
            """
         )
 
-    def addSpaceLaunches(self, ID, name, start, end, note):
+    def addSpaceLaunch(self, ID, name, start, end, note):
         self.dbcursor.execute(
            f"""
             INSERT INTO SPACE_LAUNCHES VALUES(
             "{ID}",
             "{name}",
             "{start}",
-            {end},
-            {note}
+            "{end}",
+            "{note}"
             )
            """
         )
-    def removeObject(self, name):
-        self.dbcursor.execute(f"DELETE FROM OBJECTS WHERE name = {name}")
 
-    def fetchValue(self, object, column):
+    def fetchComet(self, object, column):
         self.dbcursor.execute(
             f"""
             SELECT {column}
-            FROM OBJECTS
+            FROM COMETS
+            WHERE name = "{object}"
+            """
+        )
+
+    def fetchSolarEclipse(self, object, column):
+        self.dbcursor.execute(
+            f"""
+            SELECT {column}
+            FROM SOLAR_ECLIPSES
+            WHERE name = "{object}"
+            """
+        )
+
+    def fetchLunarEclipse(self, object, column):
+        self.dbcursor.execute(
+            f"""
+            SELECT {column}
+            FROM LUNAR_ECLIPSES
+            WHERE name = "{object}"
+            """
+        )
+
+    def fetchSpaceLaunch(self, object, column):
+        self.dbcursor.execute(
+            f"""
+            SELECT {column}
+            FROM SPACE_LAUNCHES
             WHERE name = "{object}"
             """
         )

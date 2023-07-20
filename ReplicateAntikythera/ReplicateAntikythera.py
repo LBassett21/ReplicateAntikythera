@@ -6,6 +6,7 @@ from math import *
 
 import GUI
 from Database import Database
+from Events_Databases import Events
 import Tests
 
 '''
@@ -87,10 +88,17 @@ def main():
     db = Database()
     db.initDatabase()
 
+    db_events = Events()
+    db_events.initComets()
+    db_events.initSolarEclipses()
+    db_events.initLunarEclipses()
+    db_events.initSpaceLaunches()
+
     earth_orbit = Orbit.fromDb("Earth", db)
     earth = Planet(earth_orbit)
 
     db.closeDatabase()
+    db_events.closeDatabase()
 
 if (__name__ == "__main__"):
     main()
