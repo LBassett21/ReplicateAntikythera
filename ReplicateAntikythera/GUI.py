@@ -127,7 +127,7 @@ neptune_radius = 9
 
 
 #Define the information for the key
-key_font = pygame.font.SysFont(None, 16) #font for the key
+key_font = pygame.font.SysFont('arial', 16) #font for the key
 key_text = {
     "Sun": "Yellow",
     "Earth": "Blue",

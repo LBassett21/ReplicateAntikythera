@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "ReplicateAntikythera", "ReplicateAntikythera\ReplicateAntikythera.pyproj", "{641F8FE2-E8F8-4F07-B3B5-9BD93EC07A90}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PygameGUITest", "PygameGUITest\PygameGUITest.pyproj", "{8754C623-AE91-4F5F-9E04-E7C18D333EDF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{641F8FE2-E8F8-4F07-B3B5-9BD93EC07A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{641F8FE2-E8F8-4F07-B3B5-9BD93EC07A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8754C623-AE91-4F5F-9E04-E7C18D333EDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8754C623-AE91-4F5F-9E04-E7C18D333EDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
