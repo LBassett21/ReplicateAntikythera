@@ -6,7 +6,7 @@ from math import *
 
 import GUI
 from Database import Database
-from Events_Database import Events
+#from Events_Database import Events
 import Tests
 
 '''
@@ -23,7 +23,7 @@ class Satellite:
     Given sim time (t), compute the position of the satellite.
     The position has the form of a 3d vector (X, Y, Z) with units in AU with reference to the Sun (0, 0, 0).
     '''
-    def getPos(self, t):
+    def getPos(self, t, f = None):
         orbit = self.orbit
         primary = self.primary
 
