@@ -46,6 +46,9 @@ GREEN = (0, 255, 0)
 ORANGE = (255, 165, 0)
 PURPLE = (128, 0, 128)
 WHITE = (255, 255, 255)
+BEIGE = (255, 165, 0)
+CYAN = (0, 206, 209)
+NAVY = (0, 0, 128)
 
 # Define planet properties
 sun_radius = 30
@@ -89,6 +92,20 @@ jupiter_speed = -0.008
 jupiter_angle = 0
 jupiter_mass = 2.5
 
+saturn_radius = 30
+saturn_distance = 550
+saturn_speed = -0.005
+saturn_angle = 0
+
+uranus_radius = 25
+uranus_distance = 700
+uranus_speed = -0.003
+uranus_angle = 0
+
+neptune_radius = 9
+neptune_distance = 800
+neptune_speed = -0.001
+neptune_angle = 0
 
 #Define the information for the key
 key_font = pygame.font.SysFont(None, 36) #font for the key
@@ -100,7 +117,10 @@ key_text = {
     "Mars": "Red",
     "Venus": "Green",
     "Mercury": "Orange",
-    "Jupiter": "Purple"
+    "Jupiter": "Purple",
+    "Saturn": "Beige",
+    "Uranus": "Cyan",
+    "Neptune": "Navy"
     }
 
 fastforward_button_rect = pygame.Rect(width // 2 + 55, height - 100, 70, 30)
@@ -189,13 +209,10 @@ class Option:
         self.rect = self.rend.get_rect()
         self.rect.center = self.pos
 
-
-
 Button_Start = Option("Press START to begin",((width // 2) , height // 2))
 
 #storing hovertexts in array called options
 options = [Button_Start]
-
 
 
 while running:
@@ -263,12 +280,18 @@ while running:
             venus_speed = -0.03 * time
             mercury_speed = -.04 * time
             jupiter_speed = -.008 * time
+            saturn_speed = -0.005 * time
+            uranus_speed = -0.003 * time
+            neptune_speed = -0.001 * time
         elif time == 0:
             earth_speed = -0.02 
             mars_speed = -0.01 
             venus_speed = -0.03 
             mercury_speed = -.04 
-            jupiter_speed = -.008 
+            jupiter_speed = -.008
+            saturn_speed = -0.005
+            uranus_speed = -0.003
+            neptune_speed = -0.001
 
         clock = pygame.time.Clock()
 
@@ -342,7 +365,7 @@ while running:
                     star[0] = random.randrange(0, width)
                     star[1] = random.randrange(-20, -5)
                 pygame.draw.circle(screen, YELLOW, star, 1)
-            image = pygame.image.load('elon.png')
+            #image = pygame.image.load('elon.png')
             
             #rare elon must car
             for star in star_field_elon:
@@ -350,7 +373,7 @@ while running:
                 if star[1] > height:
                     star[0] = random.randrange(0, 10000)
                     star[1] = random.randrange(-20, -5)
-                screen.blit(image,(star))
+                #screen.blit(image,(star))
             
             pygame.event.pump()
             
@@ -390,8 +413,6 @@ while running:
 
     if not paused:
     # Update planet positions
-        
-
         scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 
         earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
@@ -418,7 +439,17 @@ while running:
         jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
         jupiter_angle += jupiter_speed
 
-    
+        saturn_x = scaled_sun_pos[0] + math.cos(saturn_angle) * saturn_distance // zoom_scale
+        saturn_y = scaled_sun_pos[1] + math.sin(saturn_angle) * saturn_distance // zoom_scale
+        saturn_angle += saturn_speed
+
+        uranus_x = scaled_sun_pos[0] + math.cos(uranus_angle) * uranus_distance // zoom_scale
+        uranus_y = scaled_sun_pos[1] + math.sin(uranus_angle) * uranus_distance // zoom_scale
+        uranus_angle += uranus_speed
+
+        neptune_x = scaled_sun_pos[0] + math.cos(neptune_angle) * neptune_distance // zoom_scale
+        neptune_y = scaled_sun_pos[1] + math.sin(neptune_angle) * neptune_distance // zoom_scale
+        neptune_angle += neptune_speed
 
     # Clear the line positions
         zodiac_line_points.clear()
@@ -444,7 +475,9 @@ while running:
     pygame.draw.circle(scaled_screen, GREEN, (int(venus_x), int(venus_y)), int(venus_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, ORANGE, (int(mercury_x), int(mercury_y)),int(mercury_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, PURPLE, (int(jupiter_x), int(jupiter_y)),int(jupiter_radius//zoom_scale))
-
+    pygame.draw.circle(scaled_screen, BEIGE, (int(saturn_x), int(saturn_y)),int(saturn_radius//zoom_scale))
+    pygame.draw.circle(scaled_screen, CYAN, (int(uranus_x), int(uranus_y)),int(uranus_radius//zoom_scale))
+    pygame.draw.circle(scaled_screen, NAVY, (int(neptune_x), int(neptune_y)),int(neptune_radius//zoom_scale))
 
     key_x =10
     key_y = 10
@@ -512,19 +545,16 @@ while running:
     pygame.draw.rect(screen, BLUE, slowdown_button_rect, 1)
     screen.blit(slowdown_button_text, slowdown_button_rect.move(30,10))
     
-    
-    # Add a exit button on top of the scaled screen
     # Add a exit button on top of the scaled screen
     pygame.draw.rect(screen, BLUE, quit_button_rect, 1)
     screen.blit(quit_button_text, quit_button_rect.move(30,10))
 
     pygame.draw.rect(screen, BLUE, github_button_rect, 1)
     screen.blit(github_button_text, github_button_rect.move(30,10))
+
     #Draw the key
     text_surface_time = key_font.render(f"{time}x", True, BLUE)
     screen.blit(text_surface_time, (width // 2 - 10, height - 130))
-    
-   
     
     if wheel: 
         pygame.draw.rect(screen, BLUE, showstar_button_rect)
