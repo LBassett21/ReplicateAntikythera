@@ -40,15 +40,21 @@ class Events():
         self.dbcursor.execute("DROP TABLE IF EXISTS ALIGNMENT")
         self.dbcursor.execute("""CREATE TABLE IF NOT EXISTS ALIGNMENT (
              ID INTEGER PRIMARY KEY NOT NULL,
-             mercury TEXT NOT NULL,
-             venus TEXT NOT NULL,
-             earth TEXT NOT NULL,
-             mars TEXT NOT NULL,
-             jupiter TEXT NOT NULL,
-             neptune TEXT NOT NULL,
-             moon TEXT NOT NULL,
+             date_aligned DATETIME NOT NULL,
+             mercury BOOLEAN NOT NULL,
+             venus BOOLEAN NOT NULL,
+             earth BOOLEAN NOT NULL,
+             mars BOOLEAN NOT NULL,
+             jupiter BOOLEAN NOT NULL,
+             neptune BOOLEAN NOT NULL,
+             saturn BOOLEAN NOT NULL,
+             uranus BOOLEAN NOT NULL,
+             moon BOOLEAN NOT NULL
              )"""
         )
+
+
+        self.database.commit()
 
     def initSolarEclipses(self):
         self.openDatabase()
@@ -176,6 +182,25 @@ class Events():
            """
         )
 
+    def addAlignment(self, ID, date, mercury, venus, earth, mars, jupiter, saturn, neptune, uranus, moon):
+        self.dbcursor.execute(
+           f"""
+            INSERT INTO LUNAR_ECLIPSES VALUES(
+            "{ID}",
+            "{date}",
+            "{mercury}",
+            {venus},
+            "{earth}",
+            "{mars}",
+            "{jupiter}",
+            "{saturn}",
+            "{neptune}",
+            "{uranus}",
+            "{moon}"
+            )
+           """
+        )
+
     def addSpaceLaunch(self, ID, name, start, end, note):
         self.dbcursor.execute(
            f"""
@@ -194,6 +219,15 @@ class Events():
             f"""
             SELECT {column}
             FROM COMETS
+            WHERE name = "{object}"
+            """
+        )
+
+    def fetchAlignment(self, object, column):
+        self.dbcursor.execute(
+            f"""
+            SELECT {column}
+            FROM ALIGNMENT
             WHERE name = "{object}"
             """
         )
