@@ -156,6 +156,22 @@ class Events():
            """
         )
 
+    def initAlignment(self):
+        self.openDatabase()
+
+        self.dbcursor.execute("DROP TABLE IF EXISTS ALIGNMENT")
+        self.dbcursor.execute("""CREATE TABLE IF NOT EXISTS ALIGNMENT (
+             ID INTEGER PRIMARY KEY NOT NULL,
+             mercury TEXT NOT NULL,
+             venus TEXT NOT NULL,
+             earth TEXT NOT NULL,
+             mars TEXT NOT NULL,
+             jupiter TEXT NOT NULL,
+             neptune TEXT NOT NULL,
+             moon TEXT NOT NULL,
+             )"""
+        )
+
     def addSolarEclipse(self, ID, date_observed, type, saros, duration):
         self.dbcursor.execute(
            f"""

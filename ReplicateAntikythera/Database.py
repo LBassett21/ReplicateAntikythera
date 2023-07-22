@@ -47,8 +47,6 @@ class Database():
         self.addObject("Saturn", "Sun", 9.5826, 0.0565, 2.485, 113.665, 339.392, 10759 / solar_years_to_days, "2032-11-29", "J2000")
         self.addObject("Uranus", "Sun", 19.19126, 0.04717, 0.773, 74.006, 96.998857, 30688.5 / solar_years_to_days, "2050-08-17", "J2000")
         self.addObject("Moon", "Earth", 0.00257, 0.0549, 5.145, 0, 0, 29.530 / solar_years_to_days, "2023-01-04", "J2000")
-        self.addObject("Saturn", "Sun", 9.5826, 0.0565, 2.488878, 76.67992, 339.392, 29.4571 / solar_years_to_days, "2032-11-29", "J2000")
-        self.addObject("Uranus", "Sun", 19.191, 0.04717, 0.773, 74.006, 96.998857, 84.0205 / solar_years_to_days, "2050-08-18", "J2000")
 
         self.database.commit()
 
