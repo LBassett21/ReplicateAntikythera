@@ -5,6 +5,45 @@ from datetime import datetime, timedelta
 import random
 import sys
 import webbrowser
+from OrbitalDynamics import *
+from ReplicateAntikythera import *
+
+px_per_au = 100
+
+def align_planets(t, direction, planets):
+    for p in planets:
+        p.align(t, direction)
+
+def scale(d):
+    return (1/600-1/30)*d + 1
+
+orbit_traces = {}
+def drawOrbit(planet, surface, sim_time = 0, sample_points = 250, use_cache = True):
+    if planet in orbit_traces and use_cache:
+        orbit_trace = orbit_traces[planet]
+    else:
+        orbit_trace = pygame.Surface((width, height), pygame.SRCALPHA)
+        points = []
+        num_points = sample_points
+        for i in range(0, num_points):
+            t = i * (planet.orbit.T / num_points)
+            pos = (planet.getPos(t)) * px_per_au
+            point = (pos[0] + width / 2, pos[1] + height / 2)
+            points.append(point)
+        pygame.draw.polygon(orbit_trace, pygame.Color(255, 255, 255), points, 1)
+        if use_cache:
+            orbit_traces[planet] = orbit_trace
+
+    primary_pos = planet.getPrimaryPos(sim_time)
+    offset_x = (primary_pos[0] * px_per_au) 
+    offset_y = (primary_pos[1] * px_per_au)
+
+    surface.blit(orbit_trace, (offset_x, offset_y))
+
+def drawSatellite(sat, sim_time, color, radius, surface):
+    pos_x = width/2 + sat.getPrimaryPos(sim_time)[0] + sat.getPos(sim_time)[0] * px_per_au
+    pos_y = height/2 + sat.getPrimaryPos(sim_time)[1] + sat.getPos(sim_time)[1] * px_per_au
+    pygame.draw.circle(surface, color, (pos_x, pos_y), radius)
 
 
 time = 0
@@ -67,7 +106,6 @@ moon_speed = -0.1
 moon_angle = 0
 moon_mass = 0.2
 
-
 mars_radius = 7
 mars_distance = 300
 mars_speed = -0.01
@@ -122,6 +160,22 @@ key_text = {
     "Uranus": "Cyan",
     "Neptune": "Navy"
     }
+planets = {
+    "Mercury": Planet(Orbit.fromDb("Mercury", db)),
+    "Venus": Planet(Orbit.fromDb("Venus", db)),
+    "Earth" : Planet(Orbit.fromDb("Earth", db)),
+    "Mars": Planet(Orbit.fromDb("Mars", db)),
+    #"Jupiter": Planet(Orbit.fromDb("Jupiter", db)),
+    #"Saturn": Planet(Orbit.fromDb("Saturn", db)),
+    #"Uranus": Planet(Orbit.fromDb("Uranus", db)),
+    "Neptune": Planet(Orbit.fromDb("Neptune", db))
+}
+
+moons = {
+    "Moon": Moon(Orbit.fromDb("Moon", db), planets["Earth"])
+}
+
+moons["Moon"].orbit.a = 0.2
 
 fastforward_button_rect = pygame.Rect(width // 2 + 55, height - 100, 70, 30)
 fastforward_button_text = button_font.render("--->    ", True, WHITE)
