@@ -4,6 +4,7 @@ from datetime import timedelta
 
 import GUI
 
+
 '''
 primary: the satellite or planet around which the satellite orbits
 '''

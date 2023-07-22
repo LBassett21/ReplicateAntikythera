@@ -7,6 +7,11 @@ import sys
 import webbrowser
 
 
+
+
+
+
+
 time = 0
 #Reference date
 ref_date = datetime(2023, 1, 4)
@@ -15,10 +20,23 @@ TRANSPARENTBLUE = pygame.Color(173, 216, 230, 255)
 # Initialize Pygame
 pygame.init()
 
+
+
+
+import datetime
+current_time = datetime.datetime.now()
+formatted_time = current_time.strftime('%H:%M:%S')
+print(formatted_time)
+current_time = pygame.display.set_mode((0,0),pygame.RESIZABLE)
+
+
+
+
 # Set up the display
 width, height = pygame.display.Info().current_w, pygame.display.Info().current_h #size of the display.
 screen = pygame.display.set_mode((0,0),pygame.RESIZABLE) #creating pygame screen with width and height
 pygame.display.set_caption("Replicate Antikythera") #title
+
 
 # Start window surface definition
 start_window = pygame.Surface((width, height))
@@ -108,7 +126,7 @@ neptune_speed = -0.001
 neptune_angle = 0
 
 #Define the information for the key
-key_font = pygame.font.SysFont(None, 36) #font for the key
+key_font = pygame.font.SysFont(None, 25) #font for the key
 button_font = pygame.font.SysFont(None, 16)
 key_text = {
     "Sun": "Yellow",
