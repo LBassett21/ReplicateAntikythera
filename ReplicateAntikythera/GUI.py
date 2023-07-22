@@ -45,6 +45,8 @@ def drawSatellite(sat, sim_time, color, radius, surface):
     pos_y = height/2 + sat.getPrimaryPos(sim_time)[1] + sat.getPos(sim_time)[1] * px_per_au
     pygame.draw.circle(surface, color, (pos_x, pos_y), radius)
 
+db = Database()
+db.initDatabase()
 
 time = 0
 #Reference date
@@ -268,9 +270,14 @@ Button_Start = Option("Press START to begin",((width // 2) , height // 2))
 #storing hovertexts in array called options
 options = [Button_Start]
 
+time_delta = 0
+sim_time = 0
 
 while running:
     # Scale the screen
+
+    time_delta = clock.tick(60) / 1000.0
+    sim_time += time_delta
     
     scaled_width = int(width * zoom_scale)
     scaled_height = int(height * zoom_scale)
@@ -526,6 +533,21 @@ while running:
     pygame.draw.circle(scaled_screen, WHITE, (int(moon_x), int (moon_y)),int(moon_radius//zoom_scale))
 
     # Draw the planets
+    # Draw the planets
+    drawOrbit(planets["Mercury"], scaled_screen)
+    drawSatellite(planets["Mercury"], sim_time, ORANGE, mercury_radius, scaled_screen)
+    drawOrbit(planets["Venus"], scaled_screen)
+    drawSatellite(planets["Venus"], sim_time, GREEN, venus_radius, scaled_screen)
+    drawOrbit(planets["Earth"], scaled_screen)
+    drawSatellite(planets["Earth"], sim_time, BLUE, earth_radius, scaled_screen)
+    #drawOrbit(moons["Moon"], scaled_screen, sim_time)
+    drawSatellite(moons["Moon"], sim_time, WHITE, moon_radius, scaled_screen)
+    drawOrbit(planets["Mars"], scaled_screen)
+    drawSatellite(planets["Mars"], sim_time, RED, mars_radius, scaled_screen)
+    drawOrbit(planets["Neptune"], scaled_screen)
+    drawSatellite(planets["Neptune"], sim_time, BLUE, neptune_radius, scaled_screen)
+
+    """
     pygame.draw.circle(scaled_screen, BLUE, (int(earth_x), int(earth_y)), int(earth_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, RED, (int(mars_x), int(mars_y)), int(mars_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, GREEN, (int(venus_x), int(venus_y)), int(venus_radius//zoom_scale))
@@ -534,6 +556,7 @@ while running:
     pygame.draw.circle(scaled_screen, BEIGE, (int(saturn_x), int(saturn_y)),int(saturn_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, CYAN, (int(uranus_x), int(uranus_y)),int(uranus_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, NAVY, (int(neptune_x), int(neptune_y)),int(neptune_radius//zoom_scale))
+    """
 
     key_x =10
     key_y = 10
@@ -667,7 +690,6 @@ while running:
         screen.blit(key_surface, (key_x, key_y + i * key_padding))
    
     pygame.display.flip()
-    clock.tick(40)
 
 # Quit the game
 pygame.quit()
