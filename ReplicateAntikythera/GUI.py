@@ -9,8 +9,6 @@ from ReplicateAntikythera import *
 import time
 
 orbit_traces = {}
-
-<<<<<<< HEAD
 def align_planets(t, direction, planets):
     for p in planets:
         p.align(t, direction)
@@ -48,9 +46,8 @@ def drawSatellite(sat, sim_time, color, radius, surface):
 db = Database()
 db.initDatabase()
 
-=======
 time = 0
->>>>>>> master
+
 #Reference date
 ref_date = datetime(2023, 1, 4)
 
@@ -152,8 +149,6 @@ jupiter_speed = -0.008
 jupiter_angle = 0
 jupiter_mass = 2.5
 
-<<<<<<< HEAD
-=======
 saturn_radius = 30
 saturn_distance = 550
 saturn_speed = -0.005
@@ -169,7 +164,6 @@ neptune_distance = 800
 neptune_speed = -0.001
 neptune_angle = 0
 
->>>>>>> master
 #Define the information for the key
 key_font = pygame.font.SysFont("Arial", 36) #font for the key
 button_font = pygame.font.SysFont("Arial", 16)
@@ -186,7 +180,6 @@ key_text = {
     "Neptune": "Navy"
     }
 
-<<<<<<< HEAD
 planets = {
     "Mercury": Planet(Orbit.fromDb("Mercury", db)),
     "Venus": Planet(Orbit.fromDb("Venus", db)),
@@ -203,13 +196,13 @@ moons = {
 }
 
 moons["Moon"].orbit.a = 0.2
-=======
+
 fastforward_button_rect = pygame.Rect(width // 2 + 55, height - 100, 70, 30)
 fastforward_button_text = button_font.render("--->    ", True, WHITE)
 
 slowdown_button_rect = pygame.Rect(width // 2 - 125, height - 100, 70, 30)
 slowdown_button_text = button_font.render("<---    ", True, WHITE)
->>>>>>> master
+
 
 pause_button_rect = pygame.Rect(width - 100, 10, 90, 30)
 pause_button_text = button_font.render("Pause", True, WHITE)
@@ -298,12 +291,9 @@ options = [Button_Start]
 
 clock = pygame.time.Clock()
 
-<<<<<<< HEAD
 time_delta = 0
 sim_time = 0
 
-=======
->>>>>>> master
 while running:
     time_delta = (clock.tick(60) / 1000.0) / 4.0
 	
@@ -336,14 +326,10 @@ while running:
             if quit_button_rect.collidepoint(event.pos):
                 running = False
             if github_button_rect.collidepoint(event.pos):
-<<<<<<< HEAD
                 pass
-                # webbrowser.open('https://github.com/LBassett21/ReplicateAntikythera/tree/master')
-=======
                 webbrowser.open('https://github.com/LBassett21/ReplicateAntikythera/tree/master')
             if fastforward_button_rect.collidepoint(event.pos):
                 print("fastforward")
->>>>>>> master
             if pause_button_rect.collidepoint(event.pos):
                 paused = not paused
             if pause_button_rect1.collidepoint(event.pos): #other pause button
@@ -373,7 +359,6 @@ while running:
             offset_x = zoom_center_x - scaled_mouse_x / zoom_scale
             offset_y = zoom_center_y - scaled_mouse_y / zoom_scale
 
-<<<<<<< HEAD
     #create the locations of the stars for when we animate the background
     star_field_slow = []
     star_field_medium = []
@@ -414,7 +399,6 @@ while running:
                 if show_start_window and Button_Start.rect.collidepoint(event.pos):
                     show_start_window = False
         
-=======
         if time != 0:
             earth_speed = -0.02 * time
             mars_speed = -0.01 * time
@@ -541,9 +525,7 @@ while running:
             continue
          
 
-            
-       
->>>>>>> master
+           
         
         screen.fill(BLACK)
 
@@ -606,71 +588,46 @@ while running:
     """
     if not paused:
     # Update planet positions
-<<<<<<< HEAD
-    
-    earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
-    earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
-    earth_angle += earth_speed
+        #scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 
-    moon_x = earth_x + math.cos(moon_angle) * moon_distance // zoom_scale
-    moon_y = earth_y + math.sin(moon_angle) * moon_distance // zoom_scale
-    moon_angle += moon_speed
+        #earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
+        #earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
+        #earth_angle += earth_speed
 
-    mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance // zoom_scale
-    mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance // zoom_scale
-    mars_angle += mars_speed
+        #moon_x = earth_x + math.cos(moon_angle) * moon_distance // zoom_scale
+        #moon_y = earth_y + math.sin(moon_angle) * moon_distance // zoom_scale
+        #moon_angle += moon_speed
 
-    venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance // zoom_scale
-    venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance // zoom_scale
-    venus_angle += venus_speed
+        #mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance // zoom_scale
+        #mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance // zoom_scale
+        #mars_angle += mars_speed
 
-    mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance // zoom_scale
-    mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance // zoom_scale
-    mercury_angle += mercury_speed
+        #venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance // zoom_scale
+        #venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance // zoom_scale
+        #venus_angle += venus_speed
 
-    jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
-    jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
-    jupiter_angle += jupiter_speed
+        #mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance // zoom_scale
+        #mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance // zoom_scale
+        #mercury_angle += mercury_speed
+
+        #jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
+        #jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
+        #jupiter_angle += jupiter_speed
+
+        #saturn_x = scaled_sun_pos[0] + math.cos(saturn_angle) * saturn_distance // zoom_scale
+        #saturn_y = scaled_sun_pos[1] + math.sin(saturn_angle) * saturn_distance // zoom_scale
+        #saturn_angle += saturn_speed
+
+        #uranus_x = scaled_sun_pos[0] + math.cos(uranus_angle) * uranus_distance // zoom_scale
+        #uranus_y = scaled_sun_pos[1] + math.sin(uranus_angle) * uranus_distance // zoom_scale
+        #uranus_angle += uranus_speed
+
+        #neptune_x = scaled_sun_pos[0] + math.cos(neptune_angle) * neptune_distance // zoom_scale
+        #neptune_y = scaled_sun_pos[1] + math.sin(neptune_angle) * neptune_distance // zoom_scale
+        #neptune_angle += neptune_speed
     """
-=======
-        scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 
-        earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
-        earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
-        earth_angle += earth_speed
 
-        moon_x = earth_x + math.cos(moon_angle) * moon_distance // zoom_scale
-        moon_y = earth_y + math.sin(moon_angle) * moon_distance // zoom_scale
-        moon_angle += moon_speed
-
-        mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance // zoom_scale
-        mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance // zoom_scale
-        mars_angle += mars_speed
-
-        venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance // zoom_scale
-        venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance // zoom_scale
-        venus_angle += venus_speed
-
-        mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance // zoom_scale
-        mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance // zoom_scale
-        mercury_angle += mercury_speed
-
-        jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
-        jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
-        jupiter_angle += jupiter_speed
-
-        saturn_x = scaled_sun_pos[0] + math.cos(saturn_angle) * saturn_distance // zoom_scale
-        saturn_y = scaled_sun_pos[1] + math.sin(saturn_angle) * saturn_distance // zoom_scale
-        saturn_angle += saturn_speed
-
-        uranus_x = scaled_sun_pos[0] + math.cos(uranus_angle) * uranus_distance // zoom_scale
-        uranus_y = scaled_sun_pos[1] + math.sin(uranus_angle) * uranus_distance // zoom_scale
-        uranus_angle += uranus_speed
-
-        neptune_x = scaled_sun_pos[0] + math.cos(neptune_angle) * neptune_distance // zoom_scale
-        neptune_y = scaled_sun_pos[1] + math.sin(neptune_angle) * neptune_distance // zoom_scale
-        neptune_angle += neptune_speed
->>>>>>> master
 
     # Clear the line positions
     zodiac_line_points.clear()
@@ -712,13 +669,11 @@ while running:
     pygame.draw.circle(scaled_screen, GREEN, (int(venus_x), int(venus_y)), int(venus_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, ORANGE, (int(mercury_x), int(mercury_y)),int(mercury_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, PURPLE, (int(jupiter_x), int(jupiter_y)),int(jupiter_radius//zoom_scale))
-<<<<<<< HEAD
-    """
-=======
     pygame.draw.circle(scaled_screen, BEIGE, (int(saturn_x), int(saturn_y)),int(saturn_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, CYAN, (int(uranus_x), int(uranus_y)),int(uranus_radius//zoom_scale))
     pygame.draw.circle(scaled_screen, NAVY, (int(neptune_x), int(neptune_y)),int(neptune_radius//zoom_scale))
->>>>>>> master
+<<<<<<< HEAD
+    """
 
     key_x =10
     key_y = 10
