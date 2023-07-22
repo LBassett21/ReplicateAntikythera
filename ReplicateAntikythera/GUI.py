@@ -301,6 +301,7 @@ while running:
             saturn_speed = -0.005 * time
             uranus_speed = -0.003 * time
             neptune_speed = -0.001 * time
+            moon_speed = -0.1 * time
         elif time == 0:
             earth_speed = -0.02 
             mars_speed = -0.01 
@@ -310,6 +311,7 @@ while running:
             saturn_speed = -0.005
             uranus_speed = -0.003
             neptune_speed = -0.001
+            moon_speed = -0.1
 
         clock = pygame.time.Clock()
 
