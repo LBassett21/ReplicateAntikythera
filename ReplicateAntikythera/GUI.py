@@ -39,6 +39,17 @@ def drawSatellite(sat, sim_time, color, radius, surface, offset_x=0, offset_y=0)
     pos_y = height / 2 + sat.getPrimaryPos(sim_time)[1] + sat.getPos(sim_time)[1] * px_per_au + offset_y
     pygame.draw.circle(surface, color, (int(pos_x), int(pos_y)), radius)
 
+def drawSaturnRings(surface, sim_time, planet, radius, offset_x=0, offset_y=0):
+    pos_x = width / 2 + planet.getPrimaryPos(sim_time)[0] * zoom_scale + planet.getPos(sim_time)[0] * px_per_au * zoom_scale + offset_x
+    pos_y = height / 2 + planet.getPrimaryPos(sim_time)[1] * zoom_scale + planet.getPos(sim_time)[1] * px_per_au * zoom_scale + offset_y
+
+    ring_thickness = 5
+    inner_radius = radius * 1.8
+    outer_radius = radius * 2.2
+    pygame.draw.arc(surface, BEIGE, (pos_x - outer_radius, pos_y - inner_radius, 2 * outer_radius, 2 * inner_radius), 0, math.pi, ring_thickness)
+    pygame.draw.arc(surface, BEIGE, (pos_x - outer_radius, pos_y - inner_radius, 2 * outer_radius, 2 * inner_radius), math.pi, 2 * math.pi, ring_thickness)
+
+
 db = Database()
 db.initDatabase()
 
@@ -148,17 +159,17 @@ jupiter_speed = -0.008
 jupiter_angle = 0
 jupiter_mass = 2.5
 
-saturn_radius = 30
+saturn_radius = 20
 saturn_distance = 550
 saturn_speed = -0.005
 saturn_angle = 0
 
-uranus_radius = 25
+uranus_radius = 100
 uranus_distance = 700
 uranus_speed = -0.003
 uranus_angle = 0
 
-neptune_radius = 9
+neptune_radius = 20
 neptune_distance = 800
 neptune_speed = -0.001
 neptune_angle = 0
@@ -461,9 +472,6 @@ while running:
 
     scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 
-    earth_x = planets["Earth"].getPos(sim_time)[0]
-    earth_y = planets["Earth"].getPos(sim_time)[1]
-
     # Draw the planets
     drawOrbit(planets["Mercury"], scaled_screen, offset_x=offset_x, offset_y=offset_y)
     drawSatellite(planets["Mercury"], sim_time, ORANGE, mercury_radius, scaled_screen, offset_x=offset_x, offset_y=offset_y)
@@ -476,7 +484,14 @@ while running:
     drawOrbit(planets["Mars"], scaled_screen, offset_x=offset_x, offset_y=offset_y)
     drawSatellite(planets["Mars"], sim_time, RED, mars_radius, scaled_screen, offset_x=offset_x, offset_y=offset_y)
     drawOrbit(planets["Neptune"], scaled_screen, offset_x=offset_x, offset_y=offset_y)
-    drawSatellite(planets["Neptune"], sim_time, BLUE, neptune_radius, scaled_screen, offset_x=offset_x, offset_y=offset_y)
+    drawSatellite(planets["Neptune"], sim_time, NAVY, neptune_radius, scaled_screen, offset_x=offset_x, offset_y=offset_y)
+    drawOrbit(planets["Saturn"], scaled_screen, offset_x=offset_x, offset_y=offset_y)
+    drawSaturnRings(scaled_screen, sim_time, planets["Saturn"], saturn_radius, offset_x=offset_x, offset_y=offset_y)
+    drawSatellite(planets["Saturn"], sim_time, BEIGE, neptune_radius, scaled_screen, offset_x=offset_x, offset_y=offset_y)
+    drawOrbit(planets["Uranus"], scaled_screen, offset_x=offset_x, offset_y=offset_y)
+    drawSatellite(planets["Uranus"], sim_time, CYAN, neptune_radius, scaled_screen, offset_x=offset_x, offset_y=offset_y)
+    drawOrbit(planets["Jupiter"], scaled_screen, offset_x=offset_x, offset_y=offset_y)
+    drawSatellite(planets["Jupiter"], sim_time, PURPLE, neptune_radius, scaled_screen, offset_x=offset_x, offset_y=offset_y)
 
     earth_angle = planets["Earth"].orbit.tToF(sim_time)
 
@@ -539,6 +554,9 @@ while running:
     
     # Clear the line positions
     zodiac_line_points.clear()
+
+    earth_x = planets["Earth"].getPos(sim_time)[0]
+    earth_y = planets["Earth"].getPos(sim_time)[1]
 
     # Calculate the zodiac line endpoints
     for i in range(12):  # Assuming there are 12 zodiac signs
