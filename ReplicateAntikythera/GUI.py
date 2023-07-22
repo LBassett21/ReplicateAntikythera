@@ -12,12 +12,12 @@ from copy import deepcopy
 
 px_per_au = 100
 
+def scale_r(r: float) -> float:
+    return r * -0.25 + 1.25
+
 def align_planets(t, direction, planets):
     for p in planets:
         p.align(t, direction)
-
-def scale(d):
-    return (1/600-1/30)*d + 1
 
 trace_points_cache = {}
 def drawOrbit(planet, surface, sim_time = 0, sample_points = 250, use_cache = True):
@@ -33,8 +33,8 @@ def drawOrbit(planet, surface, sim_time = 0, sample_points = 250, use_cache = Tr
         num_points = sample_points
         for i in range(0, num_points):
             t = i * (planet.orbit.T / num_points)
-            pos = (planet.getPos(t)) * px_per_au
-            point = [pos[0] + primary_pos[0],  pos[1] + primary_pos[1]]
+            pos = planet.getPos(t) * px_per_au
+            point = [pos[0] + primary_pos[0], pos[1] + primary_pos[1]]
             trace_points.append(point)
         if use_cache:
             trace_points_cache[planet] = trace_points
@@ -176,6 +176,7 @@ key_text = {
     "Uranus": "Cyan",
     "Neptune": "Navy"
     }
+
 planets = {
     "Mercury": Planet(Orbit.fromDb("Mercury", db)),
     "Venus": Planet(Orbit.fromDb("Venus", db)),
@@ -186,6 +187,9 @@ planets = {
     "Uranus": Planet(Orbit.fromDb("Uranus", db)),
     "Neptune": Planet(Orbit.fromDb("Neptune", db))
 }
+
+for planet in planets.values():
+    planet.orbit.a = planet.orbit.a / scale_r(planet.orbit.a)
 
 moons = {
     "Moon": Moon(Orbit.fromDb("Moon", db), planets["Earth"])
@@ -219,8 +223,8 @@ github_button_text = button_font.render("Github", True, WHITE)
 
 # Define asteroid belt properties
 asteroid_radius = 2
-asteroid_distance_min = 250
-asteroid_distance_max = 300
+asteroid_distance_min = 300 
+asteroid_distance_max = 350
 asteroid_speed_min = -0.03
 asteroid_speed_max = 0.03
 asteroid_count = 200
@@ -597,7 +601,6 @@ while running:
      # Calculates the current sign
     current_sign_index = int((earth_angle / (2 * math.pi)) * len(zodiac_signs)) % len(zodiac_signs)
     current_sign = zodiac_signs[current_sign_index]
-
     
     text_box = pygame.Surface((200, 30))
     text_box.fill(BLACK)
@@ -606,7 +609,6 @@ while running:
     # Draws the lines around the earth for zodiac signs
     #for line_point in zodiac_line_points:
      #   pygame.draw.line(scaled_screen, (128, 128, 128), (int(earth_x), int(earth_y)), line_point, 1)
-  
     
     screen.blit(text_box, (key_x, key_y + len(key_text) * key_padding))
     for asteroid in asteroids:

@@ -2,6 +2,7 @@ import sqlite3
 
 solar_years_to_days = 365.242
 
+
 class Database():
     database = None
     dbcursor = None
