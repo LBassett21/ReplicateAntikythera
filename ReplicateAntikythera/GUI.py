@@ -1,4 +1,5 @@
 import pygame
+import pygame.gfxdraw
 import math
 import pygame.font
 from datetime import datetime, timedelta
@@ -7,6 +8,7 @@ import sys
 import webbrowser
 from OrbitalDynamics import *
 from ReplicateAntikythera import *
+from copy import deepcopy
 
 px_per_au = 100
 
@@ -17,33 +19,44 @@ def align_planets(t, direction, planets):
 def scale(d):
     return (1/600-1/30)*d + 1
 
-orbit_traces = {}
+trace_points_cache = {}
 def drawOrbit(planet, surface, sim_time = 0, sample_points = 250, use_cache = True):
-    if planet in orbit_traces and use_cache:
-        orbit_trace = orbit_traces[planet]
+    width = surface.get_width()
+    height = surface.get_height()
+
+    primary_pos = planet.getPrimaryPos(sim_time)
+
+    if planet in trace_points_cache and use_cache:
+        trace_points = trace_points_cache[planet]
     else:
-        orbit_trace = pygame.Surface((width, height), pygame.SRCALPHA)
-        points = []
+        trace_points = []
         num_points = sample_points
         for i in range(0, num_points):
             t = i * (planet.orbit.T / num_points)
             pos = (planet.getPos(t)) * px_per_au
-            point = (pos[0] + width / 2, pos[1] + height / 2)
-            points.append(point)
-        pygame.draw.polygon(orbit_trace, pygame.Color(255, 255, 255), points, 1)
+            point = [pos[0] + primary_pos[0],  pos[1] + primary_pos[1]]
+            trace_points.append(point)
         if use_cache:
-            orbit_traces[planet] = orbit_trace
+            trace_points_cache[planet] = trace_points
 
-    primary_pos = planet.getPrimaryPos(sim_time)
-    offset_x = (primary_pos[0] * px_per_au) 
-    offset_y = (primary_pos[1] * px_per_au)
+    offset_x = (primary_pos[0] * px_per_au + scaled_sun_pos[0])
+    offset_y = (primary_pos[1] * px_per_au + scaled_sun_pos[1])
 
-    surface.blit(orbit_trace, (offset_x, offset_y))
+    trace_points_offset = deepcopy(trace_points)
+
+    for i in range(0, sample_points):
+        trace_points_offset[i][0] = trace_points[i][0] + offset_x
+        trace_points_offset[i][1] = trace_points[i][1] + offset_y
+
+    #orbit_trace = pygame.Surface((width, height), pygame.SRCALPHA)
+    pygame.draw.polygon(surface, pygame.Color(255, 255, 255, 128), trace_points_offset, 2)
+
+    #surface.blit(orbit_trace, (0, 0))
 
 def drawSatellite(sat, sim_time, color, radius, surface):
-    pos_x = width/2 + sat.getPrimaryPos(sim_time)[0] + sat.getPos(sim_time)[0] * px_per_au
-    pos_y = height/2 + sat.getPrimaryPos(sim_time)[1] + sat.getPos(sim_time)[1] * px_per_au
-    pygame.draw.circle(surface, color, (pos_x, pos_y), radius)
+    pos_x = scaled_sun_pos[0] + sat.getPrimaryPos(sim_time)[0] + sat.getPos(sim_time)[0] * px_per_au 
+    pos_y = scaled_sun_pos[1] + sat.getPrimaryPos(sim_time)[1] + sat.getPos(sim_time)[1] * px_per_au
+    pygame.draw.circle(surface, color, (int(pos_x), int(pos_y)), radius)
 
 db = Database()
 db.initDatabase()
@@ -80,6 +93,7 @@ zodiac_signs = [
 
 # Define colors
 BLACK = (0, 0, 0)
+GRAY = (128, 128, 128)
 YELLOW = (255, 255, 0)
 BLUE = (0, 150, 255)
 RED = (255, 0, 0)
@@ -92,7 +106,7 @@ CYAN = (0, 206, 209)
 NAVY = (0, 0, 128)
 
 # Define planet properties
-sun_radius = 30
+sun_radius = 15
 sun_pos = (width // 2, height // 2)
 sun_mass = 1000
 
@@ -167,9 +181,9 @@ planets = {
     "Venus": Planet(Orbit.fromDb("Venus", db)),
     "Earth" : Planet(Orbit.fromDb("Earth", db)),
     "Mars": Planet(Orbit.fromDb("Mars", db)),
-    #"Jupiter": Planet(Orbit.fromDb("Jupiter", db)),
-    #"Saturn": Planet(Orbit.fromDb("Saturn", db)),
-    #"Uranus": Planet(Orbit.fromDb("Uranus", db)),
+    "Jupiter": Planet(Orbit.fromDb("Jupiter", db)),
+    "Saturn": Planet(Orbit.fromDb("Saturn", db)),
+    "Uranus": Planet(Orbit.fromDb("Uranus", db)),
     "Neptune": Planet(Orbit.fromDb("Neptune", db))
 }
 
@@ -272,12 +286,14 @@ options = [Button_Start]
 
 time_delta = 0
 sim_time = 0
+# in-sim years / sec
+time_scale = 4
 
 while running:
     # Scale the screen
 
     time_delta = clock.tick(60) / 1000.0
-    sim_time += time_delta
+    sim_time += (time_delta / time_scale)
     
     scaled_width = int(width * zoom_scale)
     scaled_height = int(height * zoom_scale)
@@ -478,6 +494,10 @@ while running:
     # Update planet positions
         scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 
+        earth_x = planets["Earth"].getPos(sim_time) + scaled_sun_pos[0]
+        earth_y = planets["Earth"].getPos(sim_time) + scaled_sun_pos[1]
+
+        """
         earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
         earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
         earth_angle += earth_speed
@@ -513,6 +533,7 @@ while running:
         neptune_x = scaled_sun_pos[0] + math.cos(neptune_angle) * neptune_distance // zoom_scale
         neptune_y = scaled_sun_pos[1] + math.sin(neptune_angle) * neptune_distance // zoom_scale
         neptune_angle += neptune_speed
+        """
 
     # Clear the line positions
         zodiac_line_points.clear()
@@ -530,10 +551,11 @@ while running:
     pygame.draw.circle(scaled_screen, YELLOW, (int(scaled_sun_pos[0]),int(scaled_sun_pos[1])), int(sun_radius//zoom_scale))
 
     #Draw the moon
-    pygame.draw.circle(scaled_screen, WHITE, (int(moon_x), int (moon_y)),int(moon_radius//zoom_scale))
+    #pygame.draw.circle(scaled_screen, WHITE, (int(moon_x), int (moon_y)),int(moon_radius//zoom_scale))
 
     # Draw the planets
     # Draw the planets
+
     drawOrbit(planets["Mercury"], scaled_screen)
     drawSatellite(planets["Mercury"], sim_time, ORANGE, mercury_radius, scaled_screen)
     drawOrbit(planets["Venus"], scaled_screen)
@@ -544,8 +566,14 @@ while running:
     drawSatellite(moons["Moon"], sim_time, WHITE, moon_radius, scaled_screen)
     drawOrbit(planets["Mars"], scaled_screen)
     drawSatellite(planets["Mars"], sim_time, RED, mars_radius, scaled_screen)
+    drawOrbit(planets["Jupiter"], scaled_screen)
+    drawSatellite(planets["Jupiter"], sim_time, PURPLE, mars_radius, scaled_screen)
+    drawOrbit(planets["Saturn"], scaled_screen)
+    drawSatellite(planets["Saturn"], sim_time, BEIGE, mars_radius, scaled_screen)
+    drawOrbit(planets["Uranus"], scaled_screen)
+    drawSatellite(planets["Uranus"], sim_time, CYAN, mars_radius, scaled_screen)
     drawOrbit(planets["Neptune"], scaled_screen)
-    drawSatellite(planets["Neptune"], sim_time, BLUE, neptune_radius, scaled_screen)
+    drawSatellite(planets["Neptune"], sim_time, NAVY, neptune_radius, scaled_screen)
 
     """
     pygame.draw.circle(scaled_screen, BLUE, (int(earth_x), int(earth_y)), int(earth_radius//zoom_scale))
