@@ -22,8 +22,8 @@ pygame.display.set_caption("Replicate Antikythera") #title
 
 # Start window surface definition
 start_window = pygame.Surface((width, height))
-start_font = pygame.font.SysFont(None, 36)
-title_font = pygame.font.SysFont(None, 80)
+start_font = pygame.font.SysFont("freesans", 36)
+title_font = pygame.font.SysFont("freesans", 80)
 # Imports background image to program
 background_image = pygame.image.load("starry_night.jpg")
 background_image = pygame.transform.smoothscale(background_image, (width,height))
@@ -108,8 +108,8 @@ neptune_speed = -0.001
 neptune_angle = 0
 
 #Define the information for the key
-key_font = pygame.font.SysFont(None, 36) #font for the key
-button_font = pygame.font.SysFont(None, 16)
+key_font = pygame.font.SysFont("freesans", 36) #font for the key
+button_font = pygame.font.SysFont("freesans", 16)
 key_text = {
     "Sun": "Yellow",
     "Earth": "Blue",
@@ -197,7 +197,7 @@ class Option:
     def set_rend(self):
         self.rend = start_font.render(self.text, True, self.get_color())
    
-        #start_font = pygame.font.SysFont(None, 36)
+        #start_font = pygame.font.SysFont("freesans", 36)
     def get_color(self):
         if self.hovered:
             return (255, 255, 255)
@@ -588,7 +588,7 @@ while running:
         pygame.draw.polygon(screen, WHITE, triangle11, 1)
         
         
-        special_font = pygame.font.SysFont(None, 60)
+        special_font = pygame.font.SysFont("freesans", 60)
         text1_surface = special_font.render(f"{current_sign}", True, RED)
         
     
