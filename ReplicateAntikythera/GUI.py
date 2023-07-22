@@ -297,7 +297,8 @@ while running:
     # Scale the screen
 
     time_delta = clock.tick(60) / 1000.0
-    sim_time += (time_delta / time_scale)
+    if not paused:
+        sim_time += (time_delta / time_scale)
     
     scaled_width = int(width * zoom_scale)
     scaled_height = int(height * zoom_scale)
@@ -479,13 +480,6 @@ while running:
             clock.tick(30)
             pygame.display.flip()
             continue
-         
-
-            
-       
-        
-
-       
 
     # Move/Offset the screen if dragging is true
     if dragging:
@@ -494,53 +488,54 @@ while running:
     prev_mouse_x = mouse_x
     prev_mouse_y = mouse_y
 
-    if not paused:
+    scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
+
+    earth_x = planets["Earth"].getPos(sim_time) + scaled_sun_pos[0]
+    earth_y = planets["Earth"].getPos(sim_time) + scaled_sun_pos[1]
+
+    #if not paused:
     # Update planet positions
-        scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 
-        earth_x = planets["Earth"].getPos(sim_time) + scaled_sun_pos[0]
-        earth_y = planets["Earth"].getPos(sim_time) + scaled_sun_pos[1]
+    """
+    earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
+    earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
+    earth_angle += earth_speed
 
-        """
-        earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
-        earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
-        earth_angle += earth_speed
+    moon_x = earth_x + math.cos(moon_angle) * moon_distance // zoom_scale
+    moon_y = earth_y + math.sin(moon_angle) * moon_distance // zoom_scale
+    moon_angle += moon_speed
 
-        moon_x = earth_x + math.cos(moon_angle) * moon_distance // zoom_scale
-        moon_y = earth_y + math.sin(moon_angle) * moon_distance // zoom_scale
-        moon_angle += moon_speed
+    mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance // zoom_scale
+    mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance // zoom_scale
+    mars_angle += mars_speed
 
-        mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance // zoom_scale
-        mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance // zoom_scale
-        mars_angle += mars_speed
+    venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance // zoom_scale
+    venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance // zoom_scale
+    venus_angle += venus_speed
 
-        venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance // zoom_scale
-        venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance // zoom_scale
-        venus_angle += venus_speed
+    mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance // zoom_scale
+    mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance // zoom_scale
+    mercury_angle += mercury_speed
 
-        mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance // zoom_scale
-        mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance // zoom_scale
-        mercury_angle += mercury_speed
+    jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
+    jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
+    jupiter_angle += jupiter_speed
 
-        jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
-        jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
-        jupiter_angle += jupiter_speed
+    saturn_x = scaled_sun_pos[0] + math.cos(saturn_angle) * saturn_distance // zoom_scale
+    saturn_y = scaled_sun_pos[1] + math.sin(saturn_angle) * saturn_distance // zoom_scale
+    saturn_angle += saturn_speed
 
-        saturn_x = scaled_sun_pos[0] + math.cos(saturn_angle) * saturn_distance // zoom_scale
-        saturn_y = scaled_sun_pos[1] + math.sin(saturn_angle) * saturn_distance // zoom_scale
-        saturn_angle += saturn_speed
+    uranus_x = scaled_sun_pos[0] + math.cos(uranus_angle) * uranus_distance // zoom_scale
+    uranus_y = scaled_sun_pos[1] + math.sin(uranus_angle) * uranus_distance // zoom_scale
+    uranus_angle += uranus_speed
 
-        uranus_x = scaled_sun_pos[0] + math.cos(uranus_angle) * uranus_distance // zoom_scale
-        uranus_y = scaled_sun_pos[1] + math.sin(uranus_angle) * uranus_distance // zoom_scale
-        uranus_angle += uranus_speed
-
-        neptune_x = scaled_sun_pos[0] + math.cos(neptune_angle) * neptune_distance // zoom_scale
-        neptune_y = scaled_sun_pos[1] + math.sin(neptune_angle) * neptune_distance // zoom_scale
-        neptune_angle += neptune_speed
-        """
+    neptune_x = scaled_sun_pos[0] + math.cos(neptune_angle) * neptune_distance // zoom_scale
+    neptune_y = scaled_sun_pos[1] + math.sin(neptune_angle) * neptune_distance // zoom_scale
+    neptune_angle += neptune_speed
+    """
 
     # Clear the line positions
-        zodiac_line_points.clear()
+    zodiac_line_points.clear()
 
     # Calculate the zodiac line endpoints
     for i in range(12):  # Assuming there are 12 zodiac signs
@@ -669,31 +664,30 @@ while running:
         pygame.draw.rect(screen, BLUE, showstar_button_rect)
         screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
 
-        triangle0 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[0]), (zodiac_line_points[1]))
+        triangle0 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[0]), (zodiac_line_points[1]))
         pygame.draw.polygon(screen, WHITE, triangle0, 1)
-        triangle1 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[1]), (zodiac_line_points[2]))
+        triangle1 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[1]), (zodiac_line_points[2]))
         pygame.draw.polygon(screen, WHITE, triangle1, 1)
-        triangle2 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[2]), (zodiac_line_points[3]))
+        triangle2 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[2]), (zodiac_line_points[3]))
         pygame.draw.polygon(screen, WHITE, triangle2, 1)
-        triangle3 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[3]), (zodiac_line_points[4]))
+        triangle3 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[3]), (zodiac_line_points[4]))
         pygame.draw.polygon(screen, WHITE, triangle3, 1)
-        triangle4 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[4]), (zodiac_line_points[5]))
+        triangle4 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[4]), (zodiac_line_points[5]))
         pygame.draw.polygon(screen, WHITE, triangle4, 1)
-        triangle5 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[5]), (zodiac_line_points[6]))
+        triangle5 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[5]), (zodiac_line_points[6]))
         pygame.draw.polygon(screen, WHITE, triangle5, 1)
-        triangle6 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[6]), (zodiac_line_points[7]))
+        triangle6 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[6]), (zodiac_line_points[7]))
         pygame.draw.polygon(screen, WHITE, triangle6, 1)
-        triangle7 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[7]), (zodiac_line_points[8]))
+        triangle7 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[7]), (zodiac_line_points[8]))
         pygame.draw.polygon(screen, WHITE, triangle7, 1)
-        triangle8 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[8]), (zodiac_line_points[9]))
+        triangle8 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[8]), (zodiac_line_points[9]))
         pygame.draw.polygon(screen, WHITE, triangle8, 1)
-        triangle9 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[9]), (zodiac_line_points[10]))
+        triangle9 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[9]), (zodiac_line_points[10]))
         pygame.draw.polygon(screen, WHITE, triangle9, 1)
-        triangle10 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[10]), (zodiac_line_points[11]))
+        triangle10 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[10]), (zodiac_line_points[11]))
         pygame.draw.polygon(screen, WHITE, triangle10, 1)
-        triangle11 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[11]), (zodiac_line_points[0]))
+        triangle11 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[11]), (zodiac_line_points[0]))
         pygame.draw.polygon(screen, WHITE, triangle11, 1)
-        
         
         special_font = pygame.font.SysFont("freesans", 60)
         text1_surface = special_font.render(f"{current_sign}", True, RED)
