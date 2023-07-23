@@ -24,6 +24,5 @@ class TestDatabase(unittest.TestCase):
         data = cursor.execute("SELECT name FROM OBJECTS WHERE name = Mars")
         self.assertEqual(data, 'Mars', 'The data selected from the database is incorrect')
 
-
 if (__name__ == "__main__"):
     unittest.main()
