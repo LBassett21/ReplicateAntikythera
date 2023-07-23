@@ -301,7 +301,8 @@ while running:
     # Scale the screen
 
     time_delta = clock.tick(60) / 1000.0
-    sim_time += (time_delta / time_scale)
+    if not paused:
+        sim_time += (time_delta / time_scale)
     
     scaled_width = int(width * zoom_scale)
     scaled_height = int(height * zoom_scale)
@@ -483,13 +484,6 @@ while running:
             clock.tick(30)
             pygame.display.flip()
             continue
-         
-
-            
-       
-        
-
-       
 
     # Move/Offset the screen if dragging is true
     if dragging:
@@ -498,50 +492,62 @@ while running:
     prev_mouse_x = mouse_x
     prev_mouse_y = mouse_y
 
-    if not paused:
+    scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
+
+    earth_x = planets["Earth"].getPos(sim_time)[0] + scaled_sun_pos[0]
+    earth_y = planets["Earth"].getPos(sim_time)[1] + scaled_sun_pos[1]
+    earth_angle = planets["Earth"].orbit.tToF(sim_time) + planets["Earth"].orbit.La + planets["Earth"].orbit.w
+
+    #if not paused:
     # Update planet positions
-        scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 
-        earth_x = planets["Earth"].getPos(sim_time) + scaled_sun_pos[0]
-        earth_y = planets["Earth"].getPos(sim_time) + scaled_sun_pos[1]
+    """
+    earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
+    earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
+    earth_angle += earth_speed
 
-        """
-        earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
-        earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
-        earth_angle += earth_speed
+    moon_x = earth_x + math.cos(moon_angle) * moon_distance // zoom_scale
+    moon_y = earth_y + math.sin(moon_angle) * moon_distance // zoom_scale
+    moon_angle += moon_speed
 
-        moon_x = earth_x + math.cos(moon_angle) * moon_distance // zoom_scale
-        moon_y = earth_y + math.sin(moon_angle) * moon_distance // zoom_scale
-        moon_angle += moon_speed
+    mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance // zoom_scale
+    mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance // zoom_scale
+    mars_angle += mars_speed
 
-        mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance // zoom_scale
-        mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance // zoom_scale
-        mars_angle += mars_speed
+    venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance // zoom_scale
+    venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance // zoom_scale
+    venus_angle += venus_speed
 
-        venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance // zoom_scale
-        venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance // zoom_scale
-        venus_angle += venus_speed
+    mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance // zoom_scale
+    mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance // zoom_scale
+    mercury_angle += mercury_speed
 
-        mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance // zoom_scale
-        mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance // zoom_scale
-        mercury_angle += mercury_speed
+    jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
+    jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
+    jupiter_angle += jupiter_speed
 
-        jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
-        jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
-        jupiter_angle += jupiter_speed
+    saturn_x = scaled_sun_pos[0] + math.cos(saturn_angle) * saturn_distance // zoom_scale
+    saturn_y = scaled_sun_pos[1] + math.sin(saturn_angle) * saturn_distance // zoom_scale
+    saturn_angle += saturn_speed
 
-        saturn_x = scaled_sun_pos[0] + math.cos(saturn_angle) * saturn_distance // zoom_scale
-        saturn_y = scaled_sun_pos[1] + math.sin(saturn_angle) * saturn_distance // zoom_scale
-        saturn_angle += saturn_speed
+    uranus_x = scaled_sun_pos[0] + math.cos(uranus_angle) * uranus_distance // zoom_scale
+    uranus_y = scaled_sun_pos[1] + math.sin(uranus_angle) * uranus_distance // zoom_scale
+    uranus_angle += uranus_speed
 
-        uranus_x = scaled_sun_pos[0] + math.cos(uranus_angle) * uranus_distance // zoom_scale
-        uranus_y = scaled_sun_pos[1] + math.sin(uranus_angle) * uranus_distance // zoom_scale
-        uranus_angle += uranus_speed
+    neptune_x = scaled_sun_pos[0] + math.cos(neptune_angle) * neptune_distance // zoom_scale
+    neptune_y = scaled_sun_pos[1] + math.sin(neptune_angle) * neptune_distance // zoom_scale
+    neptune_angle += neptune_speed
+    """
 
-        neptune_x = scaled_sun_pos[0] + math.cos(neptune_angle) * neptune_distance // zoom_scale
-        neptune_y = scaled_sun_pos[1] + math.sin(neptune_angle) * neptune_distance // zoom_scale
-        neptune_angle += neptune_speed
-        """
+    # Clear the line positions
+    zodiac_line_points.clear()
+
+    # Calculate the zodiac line endpoints
+    for i in range(12):  # Assuming there are 12 zodiac signs
+        angle = (i * math.pi / 6)  # Angle for each zodiac sign
+        line_x = earth_x + math.cos(angle) * 300  # Adjust the length of the lines as needed
+        line_y = earth_y + math.sin(angle) * 300
+        zodiac_line_points.append((line_x, line_y))
 
     scaled_screen.blit(scaled_background_image, (0, 0))
 
@@ -682,7 +688,7 @@ while running:
         pygame.draw.polygon(screen, WHITE, triangle11, 1)
         
         
-        special_font = pygame.font.SysFont("freesans", 60)
+        special_font = pygame.font.SysFont("Arial", 60)
         text1_surface = special_font.render(f"{current_sign}", True, RED)
         
     
@@ -696,7 +702,6 @@ while running:
         else: 
             triangle = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[current_sign_index]), (zodiac_line_points[current_sign_index - 1]))
             pygame.draw.polygon(screen, RED, triangle, 2)
-    
 
     for i, (planet, color) in enumerate(key_text.items()):
         if planet == "Earth":
