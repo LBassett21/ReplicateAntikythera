@@ -552,7 +552,7 @@ while running:
     scaled_screen.blit(scaled_background_image, (0, 0))
 
     # Draw the sun
-    pygame.draw.circle(scaled_screen, YELLOW, (int(scaled_sun_pos[0]),int(scaled_sun_pos[1])), int(sun_radius//zoom_scale))
+    pygame.draw.circle(scaled_screen, YELLOW, (int(scaled_sun_pos[0]),int(scaled_sun_pos[1])), int(sun_radius))
 
     #Draw the moon
     #pygame.draw.circle(scaled_screen, WHITE, (int(moon_x), int (moon_y)),int(moon_radius//zoom_scale))
@@ -592,8 +592,8 @@ while running:
 
     for asteroid in asteroids:
         asteroid_distance, asteroid_speed, asteroid_angle = asteroid
-        asteroid_x = scaled_sun_pos[0] + math.cos(asteroid_angle) * asteroid_distance // zoom_scale
-        asteroid_y = scaled_sun_pos[1] + math.sin(asteroid_angle) * asteroid_distance // zoom_scale
+        asteroid_x = scaled_sun_pos[0] + math.cos(asteroid_angle) * asteroid_distance
+        asteroid_y = scaled_sun_pos[1] + math.sin(asteroid_angle) * asteroid_distance
         asteroid_angle += asteroid_speed
         asteroid = (asteroid_distance, asteroid_speed, asteroid_angle)
 
@@ -662,29 +662,29 @@ while running:
         pygame.draw.rect(screen, BLUE, showstar_button_rect)
         screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
 
-        triangle0 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[0]), (zodiac_line_points[1]))
+        triangle0 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[0]), (zodiac_line_points[1]))
         pygame.draw.polygon(screen, WHITE, triangle0, 1)
-        triangle1 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[1]), (zodiac_line_points[2]))
+        triangle1 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[1]), (zodiac_line_points[2]))
         pygame.draw.polygon(screen, WHITE, triangle1, 1)
-        triangle2 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[2]), (zodiac_line_points[3]))
+        triangle2 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[2]), (zodiac_line_points[3]))
         pygame.draw.polygon(screen, WHITE, triangle2, 1)
-        triangle3 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[3]), (zodiac_line_points[4]))
+        triangle3 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[3]), (zodiac_line_points[4]))
         pygame.draw.polygon(screen, WHITE, triangle3, 1)
-        triangle4 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[4]), (zodiac_line_points[5]))
+        triangle4 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[4]), (zodiac_line_points[5]))
         pygame.draw.polygon(screen, WHITE, triangle4, 1)
-        triangle5 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[5]), (zodiac_line_points[6]))
+        triangle5 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[5]), (zodiac_line_points[6]))
         pygame.draw.polygon(screen, WHITE, triangle5, 1)
-        triangle6 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[6]), (zodiac_line_points[7]))
+        triangle6 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[6]), (zodiac_line_points[7]))
         pygame.draw.polygon(screen, WHITE, triangle6, 1)
-        triangle7 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[7]), (zodiac_line_points[8]))
+        triangle7 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[7]), (zodiac_line_points[8]))
         pygame.draw.polygon(screen, WHITE, triangle7, 1)
-        triangle8 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[8]), (zodiac_line_points[9]))
+        triangle8 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[8]), (zodiac_line_points[9]))
         pygame.draw.polygon(screen, WHITE, triangle8, 1)
-        triangle9 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[9]), (zodiac_line_points[10]))
+        triangle9 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[9]), (zodiac_line_points[10]))
         pygame.draw.polygon(screen, WHITE, triangle9, 1)
-        triangle10 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[10]), (zodiac_line_points[11]))
+        triangle10 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[10]), (zodiac_line_points[11]))
         pygame.draw.polygon(screen, WHITE, triangle10, 1)
-        triangle11 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[11]), (zodiac_line_points[0]))
+        triangle11 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[11]), (zodiac_line_points[0]))
         pygame.draw.polygon(screen, WHITE, triangle11, 1)
         
         
@@ -696,11 +696,11 @@ while running:
         screen.blit(text1_surface, ((zodiac_line_points[current_sign_index])))
         
         if current_sign_index > 0:
-            triangle = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[current_sign_index]), (zodiac_line_points[current_sign_index - 1]))
+            triangle = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[current_sign_index]), (zodiac_line_points[current_sign_index - 1]))
             pygame.draw.polygon(screen, RED, triangle, 2)
             #pygame.draw.line(screen, TRANSPARENTBLUE, ( (int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[current_sign_index])))
         else: 
-            triangle = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[current_sign_index]), (zodiac_line_points[current_sign_index - 1]))
+            triangle = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[current_sign_index]), (zodiac_line_points[current_sign_index - 1]))
             pygame.draw.polygon(screen, RED, triangle, 2)
 
     for i, (planet, color) in enumerate(key_text.items()):
