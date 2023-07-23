@@ -8,6 +8,7 @@ from Events_Databases import Events
 import GUI
 from Database import Database
 
+
 '''
 primary: the satellite or planet around which the satellite orbits
 '''
