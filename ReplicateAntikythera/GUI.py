@@ -9,6 +9,7 @@ import webbrowser
 from OrbitalDynamics import *
 from ReplicateAntikythera import *
 from copy import deepcopy
+from Events_Databases import Events
 
 px_per_au = 100
 
@@ -60,6 +61,10 @@ def drawSatellite(sat, sim_time, color, radius, surface):
 
 db = Database()
 db.initDatabase()
+
+# Opening the events database
+events_db = Events()
+events_db.openDatabase()
 
 time = 0
 #Reference date
@@ -164,6 +169,7 @@ neptune_angle = 0
 #Define the information for the key
 key_font = pygame.font.SysFont("freesans", 36) #font for the key
 button_font = pygame.font.SysFont("freesans", 16)
+events_font = pygame.font.SysFont('Arial', 16)
 key_text = {
     "Sun": "Yellow",
     "Earth": "Blue",
@@ -232,6 +238,13 @@ github_button_text_rect = github_button_text.get_rect(center=github_button_rect.
 reset_button_rect = pygame.Rect(width - 540, 10, 90, 30)
 reset_button_text = button_font.render("Reset View", True, WHITE)
 reset_button_text_rect = reset_button_text.get_rect(center=reset_button_rect.center)
+
+# Search field for events
+search_field_rect = pygame.Rect(20, 500, 150, 30)
+search_font = pygame.font.SysFont('Arial', 22)
+user_text = ''
+search_color = pygame.Color("DARK GRAY")
+search_active = False
 
 # Define asteroid belt properties
 asteroid_radius = 2
@@ -363,6 +376,12 @@ while running:
                 offset_x = 0
                 offset_y = 0
                 zoom_scale = 1.0
+        # Typing in search field
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
+                user_text = user_text[:-1]
+            elif event.key and event.key != pygame.K_RETURN:
+                user_text += event.unicode
             
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if dragging:
@@ -662,6 +681,12 @@ while running:
     pygame.draw.rect(screen, BLUE, reset_button_rect, 1)
     screen.blit(reset_button_text, reset_button_text_rect)
 
+    #Draw the search field
+    pygame.draw.rect(screen, search_color, search_field_rect)
+    search_surface = search_font.render(user_text, True, (255,255,255))
+    screen.blit(search_surface, (search_field_rect.x+5, search_field_rect.y+5))
+    search_field_rect.w = max(100, search_surface.get_width()+10)
+
     #Draw the key
     text_surface_time = key_font.render(f"{time}x", True, BLUE)
     screen.blit(text_surface_time, (width // 2 - 10, height - 130))
@@ -679,6 +704,57 @@ while running:
     # Calculates the current sign
     current_sign_index = int((earth_angle / (2 * math.pi)) * len(zodiac_signs)) % len(zodiac_signs)
     current_sign = zodiac_signs[current_sign_index]
+
+    spacing = 0
+    events_box = pygame.Surface((100, 100))
+    events_box.fill(BLACK)
+    if event.type == pygame.KEYDOWN:
+        search_active = False
+        if event.key == pygame.K_RETURN:
+            search_active = True
+                
+
+    if search_active:
+        if events_db.fetchAlignment(user_text) != []:
+            alignments = events_db.fetchAlignment(user_text)
+            for x in alignments:
+                spacing = spacing+1
+                alignment_text = x
+                vents_surface = events_font.render(f"{alignment_text}", True, WHITE)
+                screen.blit(events_surface, (10, 520 + 20*spacing))
+                #print(events_db.fetchAlignment(user_text))
+        elif events_db.fetchComet(user_text) != []:
+            comets = events_db.fetchComet(user_text)
+            for x in comets:
+                spacing = spacing+1
+                comet_text = x
+                events_surface = events_font.render(f"{comet_text}", True, WHITE)
+                screen.blit(events_surface, (10, 520 + 20*spacing))
+            #print(events_db.fetchComet(user_text))
+        elif events_db.fetchLunarEclipse(user_text) != []:
+            lunars = events_db.fetchLunarEclipse(user_text)
+            for x in lunars:
+                spacing = spacing+1
+                lunar_text = x
+                events_surface = events_font.render(f"{lunar_text}", True, WHITE)
+                screen.blit(events_surface, (10, 520 + 20*spacing))
+            #print(events_db.fetchLunarEclipse(user_text))
+        elif events_db.fetchSolarEclipse(user_text) != []:
+            solars = events_db.fetchSolarEclipse(user_text)
+            for x in solars:
+                spacing = spacing+1
+                solar_text = x
+                events_surface = events_font.render(f"{solar_text}", True, WHITE)
+                screen.blit(events_surface, (10, 520 + 20*spacing))
+            #print(events_db.fetchSolarEclipse(user_text))
+        elif events_db.fetchSpaceLaunch(user_text) != []:
+            launches = events_db.fetchSpaceLaunch(user_text)
+            for x in launches:
+                spacing = spacing+1
+                launch_text = x
+                events_surface = events_font.render(f"{launch_text}", True, WHITE)
+                screen.blit(events_surface, (10, 520 + 20*spacing))
+            #print(events_db.fetchSpaceLaunch(user_text))
 
     if wheel: 
         pygame.draw.rect(screen, BLUE, showstar_button_rect)
@@ -760,4 +836,5 @@ while running:
     pygame.display.flip()
 
 # Quit the game
+events_db.closeDatabase()
 pygame.quit()
