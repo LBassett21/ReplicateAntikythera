@@ -13,7 +13,7 @@ from copy import deepcopy
 px_per_au = 100
 
 def scale_r(r: float) -> float:
-    return r * -0.25 + 1.25
+    return 6 / r**2
 
 def align_planets(t, direction, planets):
     for p in planets:
@@ -188,8 +188,10 @@ planets = {
     "Neptune": Planet(Orbit.fromDb("Neptune", db))
 }
 
-for planet in planets.values():
-    planet.orbit.a = planet.orbit.a / scale_r(planet.orbit.a)
+planets["Jupiter"].orbit.a /= 1.5
+planets["Saturn"].orbit.a /= 2 
+planets["Uranus"].orbit.a /= 3
+planets["Neptune"].orbit.a /= 4
 
 moons = {
     "Moon": Moon(Orbit.fromDb("Moon", db), planets["Earth"])
