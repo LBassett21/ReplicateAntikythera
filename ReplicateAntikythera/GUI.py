@@ -515,7 +515,7 @@ while running:
                     star[0] = random.randrange(0, width)
                     star[1] = random.randrange(-20, -5)
                 pygame.draw.circle(screen, YELLOW, star, 1)
-            #image = pygame.image.load('elon.png')
+            image = pygame.image.load('elon.png')
             
             #rare elon must car
             for star in star_field_elon:
@@ -523,7 +523,7 @@ while running:
                 if star[1] > height:
                     star[0] = random.randrange(0, 10000)
                     star[1] = random.randrange(-20, -5)
-                #screen.blit(image,(star))
+                screen.blit(image,(star))
             
             pygame.event.pump()
             
