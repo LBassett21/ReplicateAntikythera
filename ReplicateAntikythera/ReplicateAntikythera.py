@@ -2,6 +2,7 @@ from OrbitalDynamics import *
 from scipy.spatial.transform import Rotation
 from datetime import timedelta
 
+from Events_Databases import Events
 import GUI
 
 '''
@@ -58,6 +59,15 @@ def main():
     earth_orbit = Orbit(1, 0.016710, 0, -11.26064, 114.20783, 1, date(2024, 1, 4))
     earth = Planet(earth_orbit)
     print(earth.getPos(0))
+
+    db_events = Events()
+    db_events.initComets()
+    db_events.initSolarEclipses()
+    db_events.initLunarEclipses()
+    db_events.initSpaceLaunches()
+    db_events.initAlignment()
+
+    db_events.closeDatabase()
 
 if (__name__ == "__main__"):
     main()
