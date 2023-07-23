@@ -23,7 +23,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Database.py" />
-    <Compile Include="EventsMenu.py" />
     <Compile Include="Events_Databases.py" />
     <Compile Include="GUI.py" />
     <Compile Include="OrbitalDynamics.py">
