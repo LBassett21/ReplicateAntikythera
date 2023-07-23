@@ -305,10 +305,15 @@ while running:
     time_delta = clock.tick(60) / 1000.0
     if not paused:
         sim_time += (time_delta / time_scale)
+
+    curr_date = ref_date + timedelta(days = sim_time * solar_years_to_days)
     
     scaled_width = int(width * zoom_scale)
     scaled_height = int(height * zoom_scale)
     scaled_screen = pygame.Surface((scaled_width, scaled_height))
+
+    # 776 BC was the year of the 1st olympiad
+    olympiad = (curr_date.year - -776) // 4 + 1
 
     # Scale the background image
     scaled_background_image = pygame.transform.smoothscale(background_image, (scaled_width, scaled_height))
@@ -362,7 +367,12 @@ while running:
             offset_x = zoom_center_x - scaled_mouse_x / zoom_scale
             offset_y = zoom_center_y - scaled_mouse_y / zoom_scale
 
-        time_scale = 4 - (time / 1.5)
+        if (time == 0):
+            time_scale = 4
+        elif (time > 0):
+            time_scale = 4 - (3/5 * time)
+        else:
+            time_scale = -4 - (3/5 * time)
 
         """
         if time != 0:
@@ -649,6 +659,12 @@ while running:
     #Draw the key
     text_surface_time = key_font.render(f"{time}x", True, BLUE)
     screen.blit(text_surface_time, (width // 2 - 10, height - 130))
+
+    text_surface_date = key_font.render(str(curr_date.year) + "-" + str(curr_date.month) + "-" + str(curr_date.day), True, WHITE)
+    screen.blit(text_surface_date, (30, height - 40))
+
+    olympiad_surface_date = key_font.render("Olympiad: " + str(olympiad), True, WHITE)
+    screen.blit(olympiad_surface_date, (30, height - 80))
     
     # Clear the line positions
     zodiac_line_points.clear()
