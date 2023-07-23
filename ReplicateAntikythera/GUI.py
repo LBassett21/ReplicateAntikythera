@@ -13,7 +13,7 @@ from copy import deepcopy
 px_per_au = 100
 
 def scale_r(r: float) -> float:
-    return r * -0.25 + 1.25
+    return 6 / r**2
 
 def align_planets(t, direction, planets):
     for p in planets:
@@ -188,8 +188,10 @@ planets = {
     "Neptune": Planet(Orbit.fromDb("Neptune", db))
 }
 
-for planet in planets.values():
-    planet.orbit.a = planet.orbit.a / scale_r(planet.orbit.a)
+planets["Jupiter"].orbit.a /= 1.5
+planets["Saturn"].orbit.a /= 2 
+planets["Uranus"].orbit.a /= 3
+planets["Neptune"].orbit.a /= 4
 
 moons = {
     "Moon": Moon(Orbit.fromDb("Moon", db), planets["Earth"])
@@ -198,28 +200,38 @@ moons = {
 moons["Moon"].orbit.a = 0.2
 
 fastforward_button_rect = pygame.Rect(width // 2 + 55, height - 100, 70, 30)
-fastforward_button_text = button_font.render("--->    ", True, WHITE)
+fastforward_button_text = button_font.render("→", True, WHITE)
+fastforward_button_text_rect = fastforward_button_text.get_rect(center=fastforward_button_rect.center)
 
 slowdown_button_rect = pygame.Rect(width // 2 - 125, height - 100, 70, 30)
-slowdown_button_text = button_font.render("<---    ", True, WHITE)
+slowdown_button_text = button_font.render("←", True, WHITE)
+slowdown_button_text_rect = slowdown_button_text.get_rect(center=slowdown_button_rect.center)
 
 pause_button_rect = pygame.Rect(width - 100, 10, 90, 30)
 pause_button_text = button_font.render("Pause", True, WHITE)
-
+pause_button_text_rect = pause_button_text.get_rect(center=pause_button_rect.center)
 
 pause_button_rect1 = pygame.Rect(width // 2 - 45, height - 100, 90, 30)
 pause_button_text1 = button_font.render("Pause", True, WHITE)
+pause_button_text_rect1 = pause_button_text1.get_rect(center=pause_button_rect1.center)
 
 paused = False;
 
 quit_button_rect = pygame.Rect(width - 200, 10, 90, 30)
 quit_button_text = button_font.render("Exit", True, WHITE)
+quit_button_text_rect = quit_button_text.get_rect(center=quit_button_rect.center)
 
 showstar_button_rect = pygame.Rect(width - 340, 10, 130, 30)
 showstar_button_text = button_font.render("StarSign Wheel", True, WHITE)
+showstar_button_text_rect = showstar_button_text.get_rect(center=showstar_button_rect.center)
 
 github_button_rect = pygame.Rect(width - 440, 10, 90, 30)
 github_button_text = button_font.render("Github", True, WHITE)
+github_button_text_rect = github_button_text.get_rect(center=github_button_rect.center)
+
+reset_button_rect = pygame.Rect(width - 540, 10, 90, 30)
+reset_button_text = button_font.render("Reset View", True, WHITE)
+reset_button_text_rect = reset_button_text.get_rect(center=reset_button_rect.center)
 
 # Define asteroid belt properties
 asteroid_radius = 2
@@ -347,6 +359,10 @@ while running:
                 show_start_window = False
             elif not dragging:
                 dragging = True
+            if reset_button_rect.collidepoint(event.pos):
+                offset_x = 0
+                offset_y = 0
+                zoom_scale = 1.0
             
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if dragging:
@@ -562,8 +578,6 @@ while running:
     #pygame.draw.circle(scaled_screen, WHITE, (int(moon_x), int (moon_y)),int(moon_radius//zoom_scale))
 
     # Draw the planets
-    # Draw the planets
-
     drawOrbit(planets["Mercury"], scaled_screen)
     drawSatellite(planets["Mercury"], sim_time, ORANGE, mercury_radius, scaled_screen)
     drawOrbit(planets["Venus"], scaled_screen)
@@ -613,36 +627,40 @@ while running:
 #changing buttons based on if they are clicked or not    
     if showstar_button_rect == False:
         pygame.draw.rect(screen, BLUE, showstar_button_rect)
-        screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
+        screen.blit(showstar_button_text, showstar_button_text_rect)
     else:
         pygame.draw.rect(screen, BLUE, showstar_button_rect, 1)
-        screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
+        screen.blit(showstar_button_text, showstar_button_text_rect)
     
     if paused:
         pygame.draw.rect(screen, BLUE, pause_button_rect)
-        screen.blit(pause_button_text, pause_button_rect.move(30,10))
+        screen.blit(pause_button_text, pause_button_text_rect)
 
         pygame.draw.rect(screen, BLUE, pause_button_rect1)
-        screen.blit(pause_button_text1, pause_button_rect1.move(30,10))
+        screen.blit(pause_button_text1, pause_button_text_rect1)
     else: #drawing both pause buttons here 
         pygame.draw.rect(screen, BLUE, pause_button_rect, 1)
-        screen.blit(pause_button_text, pause_button_rect.move(30,10))
+        screen.blit(pause_button_text, pause_button_text_rect)
 
         pygame.draw.rect(screen, BLUE, pause_button_rect1, 1)
-        screen.blit(pause_button_text1, pause_button_rect1.move(30,10))
+        screen.blit(pause_button_text1, pause_button_text_rect1)
     
    
     pygame.draw.rect(screen, BLUE, fastforward_button_rect, 1)
-    screen.blit(fastforward_button_text, fastforward_button_rect.move(30,10))
+    screen.blit(fastforward_button_text, fastforward_button_text_rect)
+
     pygame.draw.rect(screen, BLUE, slowdown_button_rect, 1)
-    screen.blit(slowdown_button_text, slowdown_button_rect.move(30,10))
+    screen.blit(slowdown_button_text, slowdown_button_text_rect)
     
     # Add a exit button on top of the scaled screen
     pygame.draw.rect(screen, BLUE, quit_button_rect, 1)
-    screen.blit(quit_button_text, quit_button_rect.move(30,10))
+    screen.blit(quit_button_text, quit_button_text_rect)
 
     pygame.draw.rect(screen, BLUE, github_button_rect, 1)
-    screen.blit(github_button_text, github_button_rect.move(30,10))
+    screen.blit(github_button_text, github_button_text_rect)
+
+    pygame.draw.rect(screen, BLUE, reset_button_rect, 1)
+    screen.blit(reset_button_text, reset_button_text_rect)
 
     #Draw the key
     text_surface_time = key_font.render(f"{time}x", True, BLUE)
