@@ -254,6 +254,10 @@ offset_y = 0
 zoom_center_x = width // 2
 zoom_center_y = height // 2
 
+key_x =10
+key_y = 10
+key_padding = 30
+
 class Option:
 
     hovered = False
@@ -539,16 +543,6 @@ while running:
         neptune_angle += neptune_speed
         """
 
-    # Clear the line positions
-        zodiac_line_points.clear()
-
-    # Calculate the zodiac line endpoints
-    for i in range(12):  # Assuming there are 12 zodiac signs
-        angle = (i * math.pi / 6)  # Angle for each zodiac sign
-        line_x = earth_x + math.cos(angle) * 300  # Adjust the length of the lines as needed
-        line_y = earth_y + math.sin(angle) * 300
-        zodiac_line_points.append((line_x, line_y))
-
     scaled_screen.blit(scaled_background_image, (0, 0))
 
     # Draw the sun
@@ -590,27 +584,6 @@ while running:
     pygame.draw.circle(scaled_screen, NAVY, (int(neptune_x), int(neptune_y)),int(neptune_radius//zoom_scale))
     """
 
-    key_x =10
-    key_y = 10
-    key_padding = 20
-
-    for i, (planet, color) in enumerate(key_text.items()):
-        key_surface = key_font.render(f"{planet}: {color}", True, WHITE)
-        screen.blit(key_surface, (key_x, key_y + i * key_padding))
-
-     # Calculates the current sign
-    current_sign_index = int((earth_angle / (2 * math.pi)) * len(zodiac_signs)) % len(zodiac_signs)
-    current_sign = zodiac_signs[current_sign_index]
-    
-    text_box = pygame.Surface((200, 30))
-    text_box.fill(BLACK)
-    text_surface = key_font.render(f"Current Sign: {current_sign}", True, WHITE)
-    text_box.blit(text_surface, (10, 5))
-    # Draws the lines around the earth for zodiac signs
-    #for line_point in zodiac_line_points:
-     #   pygame.draw.line(scaled_screen, (128, 128, 128), (int(earth_x), int(earth_y)), line_point, 1)
-    
-    screen.blit(text_box, (key_x, key_y + len(key_text) * key_padding))
     for asteroid in asteroids:
         asteroid_distance, asteroid_speed, asteroid_angle = asteroid
         asteroid_x = scaled_sun_pos[0] + math.cos(asteroid_angle) * asteroid_distance // zoom_scale
@@ -665,6 +638,20 @@ while running:
     text_surface_time = key_font.render(f"{time}x", True, BLUE)
     screen.blit(text_surface_time, (width // 2 - 10, height - 130))
     
+    # Clear the line positions
+    zodiac_line_points.clear()
+
+    # Calculate the zodiac line endpoints
+    for i in range(12):  # Assuming there are 12 zodiac signs
+        angle = (i * math.pi / 6)  # Angle for each zodiac sign
+        line_x = earth_x + math.cos(angle) * 300  # Adjust the length of the lines as needed
+        line_y = earth_y + math.sin(angle) * 300
+        zodiac_line_points.append((line_x, line_y))
+
+    # Calculates the current sign
+    current_sign_index = int((earth_angle / (2 * math.pi)) * len(zodiac_signs)) % len(zodiac_signs)
+    current_sign = zodiac_signs[current_sign_index]
+
     if wheel: 
         pygame.draw.rect(screen, BLUE, showstar_button_rect)
         screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
