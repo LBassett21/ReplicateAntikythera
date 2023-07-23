@@ -92,6 +92,7 @@ def main():
     db_events.initSolarEclipses()
     db_events.initLunarEclipses()
     db_events.initSpaceLaunches()
+    db_events.initAlignment()
 
     earth_orbit = Orbit.fromDb("Earth", db)
     earth = Planet(earth_orbit)
