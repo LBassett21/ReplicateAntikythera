@@ -490,8 +490,9 @@ while running:
 
     scaled_sun_pos = (scaled_center_x + offset_x, scaled_center_y + offset_y)
 
-    earth_x = planets["Earth"].getPos(sim_time) + scaled_sun_pos[0]
-    earth_y = planets["Earth"].getPos(sim_time) + scaled_sun_pos[1]
+    earth_x = planets["Earth"].getPos(sim_time)[0] + scaled_sun_pos[0]
+    earth_y = planets["Earth"].getPos(sim_time)[1] + scaled_sun_pos[1]
+    earth_angle = planets["Earth"].orbit.tToF(sim_time) + planets["Earth"].orbit.La + planets["Earth"].orbit.w
 
     #if not paused:
     # Update planet positions
@@ -664,32 +665,33 @@ while running:
         pygame.draw.rect(screen, BLUE, showstar_button_rect)
         screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
 
-        triangle0 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[0]), (zodiac_line_points[1]))
+        triangle0 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[0]), (zodiac_line_points[1]))
         pygame.draw.polygon(screen, WHITE, triangle0, 1)
-        triangle1 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[1]), (zodiac_line_points[2]))
+        triangle1 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[1]), (zodiac_line_points[2]))
         pygame.draw.polygon(screen, WHITE, triangle1, 1)
-        triangle2 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[2]), (zodiac_line_points[3]))
+        triangle2 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[2]), (zodiac_line_points[3]))
         pygame.draw.polygon(screen, WHITE, triangle2, 1)
-        triangle3 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[3]), (zodiac_line_points[4]))
+        triangle3 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[3]), (zodiac_line_points[4]))
         pygame.draw.polygon(screen, WHITE, triangle3, 1)
-        triangle4 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[4]), (zodiac_line_points[5]))
+        triangle4 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[4]), (zodiac_line_points[5]))
         pygame.draw.polygon(screen, WHITE, triangle4, 1)
-        triangle5 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[5]), (zodiac_line_points[6]))
+        triangle5 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[5]), (zodiac_line_points[6]))
         pygame.draw.polygon(screen, WHITE, triangle5, 1)
-        triangle6 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[6]), (zodiac_line_points[7]))
+        triangle6 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[6]), (zodiac_line_points[7]))
         pygame.draw.polygon(screen, WHITE, triangle6, 1)
-        triangle7 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[7]), (zodiac_line_points[8]))
+        triangle7 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[7]), (zodiac_line_points[8]))
         pygame.draw.polygon(screen, WHITE, triangle7, 1)
-        triangle8 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[8]), (zodiac_line_points[9]))
+        triangle8 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[8]), (zodiac_line_points[9]))
         pygame.draw.polygon(screen, WHITE, triangle8, 1)
-        triangle9 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[9]), (zodiac_line_points[10]))
+        triangle9 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[9]), (zodiac_line_points[10]))
         pygame.draw.polygon(screen, WHITE, triangle9, 1)
-        triangle10 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[10]), (zodiac_line_points[11]))
+        triangle10 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[10]), (zodiac_line_points[11]))
         pygame.draw.polygon(screen, WHITE, triangle10, 1)
-        triangle11 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[11]), (zodiac_line_points[0]))
+        triangle11 = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[11]), (zodiac_line_points[0]))
         pygame.draw.polygon(screen, WHITE, triangle11, 1)
         
-        special_font = pygame.font.SysFont("freesans", 60)
+        
+        special_font = pygame.font.SysFont("Arial", 60)
         text1_surface = special_font.render(f"{current_sign}", True, RED)
         
     
@@ -703,7 +705,6 @@ while running:
         else: 
             triangle = ((int(sun_pos[0]), int(sun_pos[1])), (zodiac_line_points[current_sign_index]), (zodiac_line_points[current_sign_index - 1]))
             pygame.draw.polygon(screen, RED, triangle, 2)
-    
 
     for i, (planet, color) in enumerate(key_text.items()):
         if planet == "Earth":
