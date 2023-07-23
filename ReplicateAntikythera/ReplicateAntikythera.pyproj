@@ -11,6 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>ReplicateAntikythera</Name>
     <RootNamespace>ReplicateAntikythera</RootNamespace>
+    <TestFramework>Pytest</TestFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

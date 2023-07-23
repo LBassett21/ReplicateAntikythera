@@ -9,6 +9,7 @@ import webbrowser
 from OrbitalDynamics import *
 from ReplicateAntikythera import *
 from copy import deepcopy
+from Events_Databases import Events
 
 px_per_au = 100
 
@@ -60,6 +61,10 @@ def drawSatellite(sat, sim_time, color, radius, surface):
 
 db = Database()
 db.initDatabase()
+
+# Opening the events database
+events_db = Events()
+events_db.openDatabase()
 
 time = 0
 #Reference date
@@ -164,6 +169,7 @@ neptune_angle = 0
 #Define the information for the key
 key_font = pygame.font.SysFont("freesans", 36) #font for the key
 button_font = pygame.font.SysFont("freesans", 16)
+events_font = pygame.font.SysFont('Arial', 16)
 key_text = {
     "Sun": "Yellow",
     "Earth": "Blue",
@@ -200,28 +206,45 @@ moons = {
 moons["Moon"].orbit.a = 0.2
 
 fastforward_button_rect = pygame.Rect(width // 2 + 55, height - 100, 70, 30)
-fastforward_button_text = button_font.render("--->    ", True, WHITE)
+fastforward_button_text = button_font.render("→", True, WHITE)
+fastforward_button_text_rect = fastforward_button_text.get_rect(center=fastforward_button_rect.center)
 
 slowdown_button_rect = pygame.Rect(width // 2 - 125, height - 100, 70, 30)
-slowdown_button_text = button_font.render("<---    ", True, WHITE)
+slowdown_button_text = button_font.render("←", True, WHITE)
+slowdown_button_text_rect = slowdown_button_text.get_rect(center=slowdown_button_rect.center)
 
 pause_button_rect = pygame.Rect(width - 100, 10, 90, 30)
 pause_button_text = button_font.render("Pause", True, WHITE)
-
+pause_button_text_rect = pause_button_text.get_rect(center=pause_button_rect.center)
 
 pause_button_rect1 = pygame.Rect(width // 2 - 45, height - 100, 90, 30)
 pause_button_text1 = button_font.render("Pause", True, WHITE)
+pause_button_text_rect1 = pause_button_text1.get_rect(center=pause_button_rect1.center)
 
 paused = False;
 
 quit_button_rect = pygame.Rect(width - 200, 10, 90, 30)
 quit_button_text = button_font.render("Exit", True, WHITE)
+quit_button_text_rect = quit_button_text.get_rect(center=quit_button_rect.center)
 
 showstar_button_rect = pygame.Rect(width - 340, 10, 130, 30)
 showstar_button_text = button_font.render("StarSign Wheel", True, WHITE)
+showstar_button_text_rect = showstar_button_text.get_rect(center=showstar_button_rect.center)
 
 github_button_rect = pygame.Rect(width - 440, 10, 90, 30)
 github_button_text = button_font.render("Github", True, WHITE)
+github_button_text_rect = github_button_text.get_rect(center=github_button_rect.center)
+
+reset_button_rect = pygame.Rect(width - 540, 10, 90, 30)
+reset_button_text = button_font.render("Reset View", True, WHITE)
+reset_button_text_rect = reset_button_text.get_rect(center=reset_button_rect.center)
+
+# Search field for events
+search_field_rect = pygame.Rect(20, 500, 150, 30)
+search_font = pygame.font.SysFont('Arial', 22)
+user_text = ''
+search_color = pygame.Color("DARK GRAY")
+search_active = False
 
 # Define asteroid belt properties
 asteroid_radius = 2
@@ -354,6 +377,16 @@ while running:
                 show_start_window = False
             elif not dragging:
                 dragging = True
+            if reset_button_rect.collidepoint(event.pos):
+                offset_x = 0
+                offset_y = 0
+                zoom_scale = 1.0
+        # Typing in search field
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
+                user_text = user_text[:-1]
+            elif event.key and event.key != pygame.K_RETURN:
+                user_text += event.unicode
             
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if dragging:
@@ -568,14 +601,12 @@ while running:
     scaled_screen.blit(scaled_background_image, (0, 0))
 
     # Draw the sun
-    pygame.draw.circle(scaled_screen, YELLOW, (int(scaled_sun_pos[0]),int(scaled_sun_pos[1])), int(sun_radius//zoom_scale))
+    pygame.draw.circle(scaled_screen, YELLOW, (int(scaled_sun_pos[0]),int(scaled_sun_pos[1])), int(sun_radius))
 
     #Draw the moon
     #pygame.draw.circle(scaled_screen, WHITE, (int(moon_x), int (moon_y)),int(moon_radius//zoom_scale))
 
     # Draw the planets
-    # Draw the planets
-
     drawOrbit(planets["Mercury"], scaled_screen)
     drawSatellite(planets["Mercury"], sim_time, ORANGE, mercury_radius, scaled_screen)
     drawOrbit(planets["Venus"], scaled_screen)
@@ -608,8 +639,8 @@ while running:
 
     for asteroid in asteroids:
         asteroid_distance, asteroid_speed, asteroid_angle = asteroid
-        asteroid_x = scaled_sun_pos[0] + math.cos(asteroid_angle) * asteroid_distance // zoom_scale
-        asteroid_y = scaled_sun_pos[1] + math.sin(asteroid_angle) * asteroid_distance // zoom_scale
+        asteroid_x = scaled_sun_pos[0] + math.cos(asteroid_angle) * asteroid_distance
+        asteroid_y = scaled_sun_pos[1] + math.sin(asteroid_angle) * asteroid_distance
         asteroid_angle += asteroid_speed
         asteroid = (asteroid_distance, asteroid_speed, asteroid_angle)
 
@@ -625,36 +656,46 @@ while running:
 #changing buttons based on if they are clicked or not    
     if showstar_button_rect == False:
         pygame.draw.rect(screen, BLUE, showstar_button_rect)
-        screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
+        screen.blit(showstar_button_text, showstar_button_text_rect)
     else:
         pygame.draw.rect(screen, BLUE, showstar_button_rect, 1)
-        screen.blit(showstar_button_text, showstar_button_rect.move(30,10))
+        screen.blit(showstar_button_text, showstar_button_text_rect)
     
     if paused:
         pygame.draw.rect(screen, BLUE, pause_button_rect)
-        screen.blit(pause_button_text, pause_button_rect.move(30,10))
+        screen.blit(pause_button_text, pause_button_text_rect)
 
         pygame.draw.rect(screen, BLUE, pause_button_rect1)
-        screen.blit(pause_button_text1, pause_button_rect1.move(30,10))
+        screen.blit(pause_button_text1, pause_button_text_rect1)
     else: #drawing both pause buttons here 
         pygame.draw.rect(screen, BLUE, pause_button_rect, 1)
-        screen.blit(pause_button_text, pause_button_rect.move(30,10))
+        screen.blit(pause_button_text, pause_button_text_rect)
 
         pygame.draw.rect(screen, BLUE, pause_button_rect1, 1)
-        screen.blit(pause_button_text1, pause_button_rect1.move(30,10))
+        screen.blit(pause_button_text1, pause_button_text_rect1)
     
    
     pygame.draw.rect(screen, BLUE, fastforward_button_rect, 1)
-    screen.blit(fastforward_button_text, fastforward_button_rect.move(30,10))
+    screen.blit(fastforward_button_text, fastforward_button_text_rect)
+
     pygame.draw.rect(screen, BLUE, slowdown_button_rect, 1)
-    screen.blit(slowdown_button_text, slowdown_button_rect.move(30,10))
+    screen.blit(slowdown_button_text, slowdown_button_text_rect)
     
     # Add a exit button on top of the scaled screen
     pygame.draw.rect(screen, BLUE, quit_button_rect, 1)
-    screen.blit(quit_button_text, quit_button_rect.move(30,10))
+    screen.blit(quit_button_text, quit_button_text_rect)
 
     pygame.draw.rect(screen, BLUE, github_button_rect, 1)
-    screen.blit(github_button_text, github_button_rect.move(30,10))
+    screen.blit(github_button_text, github_button_text_rect)
+
+    pygame.draw.rect(screen, BLUE, reset_button_rect, 1)
+    screen.blit(reset_button_text, reset_button_text_rect)
+
+    #Draw the search field
+    pygame.draw.rect(screen, search_color, search_field_rect)
+    search_surface = search_font.render(user_text, True, (255,255,255))
+    screen.blit(search_surface, (search_field_rect.x+5, search_field_rect.y+5))
+    search_field_rect.w = max(100, search_surface.get_width()+10)
 
     #Draw the key
     text_surface_time = key_font.render(f"{time}x", True, BLUE)
@@ -679,6 +720,57 @@ while running:
     # Calculates the current sign
     current_sign_index = int((earth_angle / (2 * math.pi)) * len(zodiac_signs)) % len(zodiac_signs)
     current_sign = zodiac_signs[current_sign_index]
+
+    spacing = 0
+    events_box = pygame.Surface((100, 100))
+    events_box.fill(BLACK)
+    if event.type == pygame.KEYDOWN:
+        search_active = False
+        if event.key == pygame.K_RETURN:
+            search_active = True
+                
+
+    if search_active:
+        if events_db.fetchAlignment(user_text) != []:
+            alignments = events_db.fetchAlignment(user_text)
+            for x in alignments:
+                spacing = spacing+1
+                alignment_text = x
+                vents_surface = events_font.render(f"{alignment_text}", True, WHITE)
+                screen.blit(events_surface, (10, 520 + 20*spacing))
+                #print(events_db.fetchAlignment(user_text))
+        elif events_db.fetchComet(user_text) != []:
+            comets = events_db.fetchComet(user_text)
+            for x in comets:
+                spacing = spacing+1
+                comet_text = x
+                events_surface = events_font.render(f"{comet_text}", True, WHITE)
+                screen.blit(events_surface, (10, 520 + 20*spacing))
+            #print(events_db.fetchComet(user_text))
+        elif events_db.fetchLunarEclipse(user_text) != []:
+            lunars = events_db.fetchLunarEclipse(user_text)
+            for x in lunars:
+                spacing = spacing+1
+                lunar_text = x
+                events_surface = events_font.render(f"{lunar_text}", True, WHITE)
+                screen.blit(events_surface, (10, 520 + 20*spacing))
+            #print(events_db.fetchLunarEclipse(user_text))
+        elif events_db.fetchSolarEclipse(user_text) != []:
+            solars = events_db.fetchSolarEclipse(user_text)
+            for x in solars:
+                spacing = spacing+1
+                solar_text = x
+                events_surface = events_font.render(f"{solar_text}", True, WHITE)
+                screen.blit(events_surface, (10, 520 + 20*spacing))
+            #print(events_db.fetchSolarEclipse(user_text))
+        elif events_db.fetchSpaceLaunch(user_text) != []:
+            launches = events_db.fetchSpaceLaunch(user_text)
+            for x in launches:
+                spacing = spacing+1
+                launch_text = x
+                events_surface = events_font.render(f"{launch_text}", True, WHITE)
+                screen.blit(events_surface, (10, 520 + 20*spacing))
+            #print(events_db.fetchSpaceLaunch(user_text))
 
     if wheel: 
         pygame.draw.rect(screen, BLUE, showstar_button_rect)
@@ -760,4 +852,5 @@ while running:
     pygame.display.flip()
 
 # Quit the game
+events_db.closeDatabase()
 pygame.quit()
