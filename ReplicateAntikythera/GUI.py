@@ -388,8 +388,7 @@ while running:
         # Typing in search field
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSPACE:
-                while event.key == pygame.K_BACKSPACE:
-                    user_text = user_text[:-1]
+                user_text = user_text[:-1]
             elif event.key and event.key != pygame.K_RETURN and len(user_text) < 20:
                 user_text += event.unicode
             
