@@ -76,7 +76,7 @@ pygame.init()
 
 # Music
 pygame.mixer.music.load('Interstellar Main Theme - Hans Zimmer.mp3')
-pygame.mixer.music.play()
+pygame.mixer.music.play(loops=-1)
 
 # Set up the display
 width, height = pygame.display.Info().current_w, pygame.display.Info().current_h #size of the display.
