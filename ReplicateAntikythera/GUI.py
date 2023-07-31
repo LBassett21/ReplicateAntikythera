@@ -697,7 +697,7 @@ while running:
 
     #Draw the search field
     pygame.draw.rect(screen, search_color, search_field_rect)
-    search_surface = search_font.render(user_text, True, (255,255,255))
+    search_surface = search_font.render(user_text, True, 'BLACK')
     screen.blit(search_surface, (search_field_rect.x+5, search_field_rect.y+5))
     search_field_rect.w = max(100, search_surface.get_width()+10)
 
