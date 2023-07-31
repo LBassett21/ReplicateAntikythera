@@ -74,6 +74,10 @@ TRANSPARENTBLUE = pygame.Color(173, 216, 230, 255)
 # Initialize Pygame
 pygame.init()
 
+# Music
+pygame.mixer.music.load('Interstellar Main Theme - Hans Zimmer.mp3')
+pygame.mixer.music.play()
+
 # Set up the display
 width, height = pygame.display.Info().current_w, pygame.display.Info().current_h #size of the display.
 screen = pygame.display.set_mode((0,0),pygame.RESIZABLE) #creating pygame screen with width and height
@@ -323,8 +327,8 @@ sim_time = 0
 time_scale = 4
 
 while running:
-    # Scale the screen
 
+    # Scale the screen
     time_delta = clock.tick(60) / 1000.0
     if not paused:
         sim_time += (time_delta / time_scale)
@@ -384,8 +388,9 @@ while running:
         # Typing in search field
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSPACE:
-                user_text = user_text[:-1]
-            elif event.key and event.key != pygame.K_RETURN:
+                while event.key == pygame.K_BACKSPACE:
+                    user_text = user_text[:-1]
+            elif event.key and event.key != pygame.K_RETURN and len(user_text) < 20:
                 user_text += event.unicode
             
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
