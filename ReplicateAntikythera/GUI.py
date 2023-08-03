@@ -330,7 +330,8 @@ options = [Button_Start]
 time_delta = 0
 sim_time = 0
 # in-sim years / sec
-time_scale = 4
+time_scale_default = 4
+time_scale = time_scale_default
 
 while running:
     # Scale the screen
@@ -417,11 +418,11 @@ while running:
             offset_y = zoom_center_y - scaled_mouse_y / zoom_scale
 
         if (time == 0):
-            time_scale = 4
+            time_scale = time_scale_default
         elif (time > 0):
-            time_scale = 4 - (3/5 * time)
+            time_scale = time_scale_default / time
         else:
-            time_scale = -4 - (3/5 * time)
+            time_scale = -time_scale_default / time
 
         clock = pygame.time.Clock()
 
