@@ -330,7 +330,7 @@ options = [Button_Start]
 time_delta = 0
 sim_time = 0
 # in-sim years / sec
-time_scale_default = 4
+time_scale_default = 5
 time_scale = time_scale_default
 
 while running:
@@ -379,10 +379,10 @@ while running:
             if showstar_button_rect.collidepoint(event.pos):
                 wheel = not wheel
             if fastforward_button_rect.collidepoint(event.pos):
-                if time < 5:
+                if time < 9:
                     time = time + 1
             if slowdown_button_rect.collidepoint(event.pos):
-                if time > -5:
+                if time > -9:
                     time = time - 1
             elif show_start_window and Button_Start.rect.collidepoint(event.pos):
                 show_start_window = False
@@ -419,10 +419,8 @@ while running:
 
         if (time == 0):
             time_scale = time_scale_default
-        elif (time > 0):
-            time_scale = time_scale_default / time
         else:
-            time_scale = -time_scale_default / time
+            time_scale = time_scale_default / time
 
         clock = pygame.time.Clock()
 
@@ -448,8 +446,8 @@ while running:
             star_field_fast.append([star_loc_x, star_loc_y])
         
         for elon_stars in range(1):
-            star_loc_x = random.randrange(0, 100000)
-            star_loc_y = random.randrange(0, 100000)
+            star_loc_x = random.randrange(0, 500000)
+            star_loc_y = random.randrange(0, 500000)
             star_field_elon.append([star_loc_x, star_loc_y])
 
         #define some commonly used colours
