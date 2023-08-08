@@ -75,6 +75,18 @@ TRANSPARENTBLUE = pygame.Color(173, 216, 230, 255)
 # Initialize Pygame
 pygame.init()
 
+
+
+
+import datetime
+current_time = datetime.datetime.now()
+formatted_time = current_time.strftime('%H:%M:%S')
+print(formatted_time)
+current_time = pygame.display.set_mode((0,0),pygame.RESIZABLE)
+
+
+
+
 # Music
 pygame.mixer.music.load('Interstellar Main Theme - Hans Zimmer.mp3')
 pygame.mixer.music.play(loops=-1)
@@ -83,6 +95,7 @@ pygame.mixer.music.play(loops=-1)
 width, height = pygame.display.Info().current_w, pygame.display.Info().current_h #size of the display.
 screen = pygame.display.set_mode((0,0),pygame.RESIZABLE) #creating pygame screen with width and height
 pygame.display.set_caption("Replicate Antikythera") #title
+
 
 # Start window surface definition
 start_window = pygame.Surface((width, height))
