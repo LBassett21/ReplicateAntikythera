@@ -3,11 +3,11 @@ from OrbitalDynamics import *
 from scipy.spatial.transform import Rotation
 from datetime import timedelta
 from math import *
+from Events_Databases import Events
 
 import GUI
 from Database import Database
-from Events_Databases import Events
-import Tests
+
 
 '''
 primary: the satellite or planet around which the satellite orbits
@@ -88,17 +88,19 @@ def main():
     db = Database()
     db.initDatabase()
 
+    earth_orbit = Orbit.fromDb("Earth", db)
+    earth = Planet(earth_orbit)
+
     db_events = Events()
     db_events.initComets()
     db_events.initSolarEclipses()
     db_events.initLunarEclipses()
     db_events.initSpaceLaunches()
+    db_events.initAlignment()
 
-    earth_orbit = Orbit.fromDb("Earth", db)
-    earth = Planet(earth_orbit)
+    db_events.closeDatabase()
 
     db.closeDatabase()
-    db_events.closeDatabase()
 
 if (__name__ == "__main__"):
     main()
