@@ -10,6 +10,7 @@ from OrbitalDynamics import *
 from ReplicateAntikythera import *
 from copy import deepcopy
 from Events_Databases import Events
+#from PygameGUITest import event_window
 
 px_per_au = 100
 
@@ -244,7 +245,7 @@ reset_button_text = button_font.render("Reset View", True, WHITE)
 reset_button_text_rect = reset_button_text.get_rect(center=reset_button_rect.center)
 
 # Search field for events
-search_field_rect = pygame.Rect(20, 500, 150, 30)
+search_field_rect = pygame.Rect(20, 350, 150, 30)
 search_font = pygame.font.SysFont('Arial', 22)
 user_text = ''
 search_color = pygame.Color("DARK GRAY")
@@ -411,28 +412,6 @@ while running:
         else:
             time_scale = -4 - (3/5 * time)
 
-        """
-        if time != 0:
-            earth_speed = -0.02 * time
-            mars_speed = -0.01 * time
-            venus_speed = -0.03 * time
-            mercury_speed = -.04 * time
-            jupiter_speed = -.008 * time
-            saturn_speed = -0.005 * time
-            uranus_speed = -0.003 * time
-            neptune_speed = -0.001 * time
-            moon_speed = -0.1 * time
-        elif time == 0:
-            earth_speed = -0.02 
-            mars_speed = -0.01 
-            venus_speed = -0.03 
-            mercury_speed = -.04 
-            jupiter_speed = -.008
-            saturn_speed = -0.005
-            uranus_speed = -0.003
-            neptune_speed = -0.001
-            moon_speed = -0.1
-        """
 
         clock = pygame.time.Clock()
 
@@ -551,47 +530,6 @@ while running:
     earth_y = planets["Earth"].getPos(sim_time)[1] + scaled_sun_pos[1]
     earth_angle = planets["Earth"].orbit.tToF(sim_time) + planets["Earth"].orbit.La + planets["Earth"].orbit.w
 
-    #if not paused:
-    # Update planet positions
-
-    """
-    earth_x = scaled_sun_pos[0] + math.cos(earth_angle) * earth_distance // zoom_scale
-    earth_y = scaled_sun_pos[1] + math.sin(earth_angle) * earth_distance // zoom_scale
-    earth_angle += earth_speed
-
-    moon_x = earth_x + math.cos(moon_angle) * moon_distance // zoom_scale
-    moon_y = earth_y + math.sin(moon_angle) * moon_distance // zoom_scale
-    moon_angle += moon_speed
-
-    mars_x = scaled_sun_pos[0] + math.cos(mars_angle) * mars_distance // zoom_scale
-    mars_y = scaled_sun_pos[1] + math.sin(mars_angle) * mars_distance // zoom_scale
-    mars_angle += mars_speed
-
-    venus_x = scaled_sun_pos[0] + math.cos(venus_angle) * venus_distance // zoom_scale
-    venus_y = scaled_sun_pos[1] + math.sin(venus_angle) * venus_distance // zoom_scale
-    venus_angle += venus_speed
-
-    mercury_x = scaled_sun_pos[0] + math.cos(mercury_angle) * mercury_distance // zoom_scale
-    mercury_y = scaled_sun_pos[1] + math.sin(mercury_angle) * mercury_distance // zoom_scale
-    mercury_angle += mercury_speed
-
-    jupiter_x = scaled_sun_pos[0] + math.cos(jupiter_angle) * jupiter_distance // zoom_scale
-    jupiter_y = scaled_sun_pos[1] + math.sin(jupiter_angle) * jupiter_distance // zoom_scale
-    jupiter_angle += jupiter_speed
-
-    saturn_x = scaled_sun_pos[0] + math.cos(saturn_angle) * saturn_distance // zoom_scale
-    saturn_y = scaled_sun_pos[1] + math.sin(saturn_angle) * saturn_distance // zoom_scale
-    saturn_angle += saturn_speed
-
-    uranus_x = scaled_sun_pos[0] + math.cos(uranus_angle) * uranus_distance // zoom_scale
-    uranus_y = scaled_sun_pos[1] + math.sin(uranus_angle) * uranus_distance // zoom_scale
-    uranus_angle += uranus_speed
-
-    neptune_x = scaled_sun_pos[0] + math.cos(neptune_angle) * neptune_distance // zoom_scale
-    neptune_y = scaled_sun_pos[1] + math.sin(neptune_angle) * neptune_distance // zoom_scale
-    neptune_angle += neptune_speed
-    """
-
     # Clear the line positions
     zodiac_line_points.clear()
 
@@ -630,16 +568,6 @@ while running:
     drawOrbit(planets["Neptune"], scaled_screen)
     drawSatellite(planets["Neptune"], sim_time, NAVY, neptune_radius, scaled_screen)
 
-    """
-    pygame.draw.circle(scaled_screen, BLUE, (int(earth_x), int(earth_y)), int(earth_radius//zoom_scale))
-    pygame.draw.circle(scaled_screen, RED, (int(mars_x), int(mars_y)), int(mars_radius//zoom_scale))
-    pygame.draw.circle(scaled_screen, GREEN, (int(venus_x), int(venus_y)), int(venus_radius//zoom_scale))
-    pygame.draw.circle(scaled_screen, ORANGE, (int(mercury_x), int(mercury_y)),int(mercury_radius//zoom_scale))
-    pygame.draw.circle(scaled_screen, PURPLE, (int(jupiter_x), int(jupiter_y)),int(jupiter_radius//zoom_scale))
-    pygame.draw.circle(scaled_screen, BEIGE, (int(saturn_x), int(saturn_y)),int(saturn_radius//zoom_scale))
-    pygame.draw.circle(scaled_screen, CYAN, (int(uranus_x), int(uranus_y)),int(uranus_radius//zoom_scale))
-    pygame.draw.circle(scaled_screen, NAVY, (int(neptune_x), int(neptune_y)),int(neptune_radius//zoom_scale))
-    """
 
     for asteroid in asteroids:
         asteroid_distance, asteroid_speed, asteroid_angle = asteroid
@@ -733,47 +661,81 @@ while running:
         if event.key == pygame.K_RETURN:
             search_active = True
                 
+    #event_button_rect = pygame.Rect(width - 100, 10, 90, 30)
+    #event_button_text = button_font.render(f"{alignment_text}", True, WHITE)
+    #event_button_text_rect = pause_button_text.get_rect(center=pause_button_rect.center)
 
+    '''
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if show_start_window and Button_Start.rect.collidepoint(event.pos):
+                show_start_window = False
+    '''
     if search_active:
         if events_db.fetchAlignment(user_text) != []:
             alignments = events_db.fetchAlignment(user_text)
             for x in alignments:
                 spacing = spacing+1
                 alignment_text = x
-                vents_surface = events_font.render(f"{alignment_text}", True, WHITE)
-                screen.blit(events_surface, (10, 520 + 20*spacing))
+                #events_surface = events_font.render(f"{alignment_text}", True, WHITE)
+                event_button_rect = pygame.Rect(width - 100, 10, 90, 30)
+                pygame.draw.rect(screen, BLUE, event_button_rect)
+                event_button_text = button_font.render(f"{alignment_text}", True, WHITE)
+                event_button_text_rect = event_button_text.get_rect(center=event_button_rect.center)
+                screen.blit(event_button_text, (10, 520 + 20*spacing))
                 #print(events_db.fetchAlignment(user_text))
-        elif events_db.fetchComet(user_text) != []:
+        if events_db.fetchComet(user_text) != []:
             comets = events_db.fetchComet(user_text)
             for x in comets:
                 spacing = spacing+1
                 comet_text = x
-                events_surface = events_font.render(f"{comet_text}", True, WHITE)
-                screen.blit(events_surface, (10, 520 + 20*spacing))
+                event_button_rect = pygame.Rect(30, 375 + 35*spacing, 230, 30)
+                event_button_text = button_font.render(f"{comet_text}", True, WHITE)
+                event_button_text_rect = event_button_text.get_rect(center=event_button_rect.center)
+                pygame.draw.rect(screen, BLUE, event_button_rect)
+                screen.blit(event_button_text, event_button_text_rect)
+                #screen.blit(event_button_text, (10, 520 + 20*spacing))
+                #events_surface = events_font.render(f"{comet_text}", True, WHITE)
+                #screen.blit(events_surface, (10, 520 + 20*spacing))
             #print(events_db.fetchComet(user_text))
-        elif events_db.fetchLunarEclipse(user_text) != []:
+        if events_db.fetchLunarEclipse(user_text) != []:
             lunars = events_db.fetchLunarEclipse(user_text)
             for x in lunars:
                 spacing = spacing+1
                 lunar_text = x
-                events_surface = events_font.render(f"{lunar_text}", True, WHITE)
-                screen.blit(events_surface, (10, 520 + 20*spacing))
+                event_button_rect = pygame.Rect(30, 375 + 35*spacing, 230, 30)
+                event_button_text = button_font.render(f"{lunar_text}", True, WHITE)
+                event_button_text_rect = event_button_text.get_rect(center=event_button_rect.center)
+                pygame.draw.rect(screen, BLUE, event_button_rect)
+                screen.blit(event_button_text, event_button_text_rect)
+                #events_surface = events_font.render(f"{lunar_text}", True, WHITE)
+                #screen.blit(events_surface, (10, 520 + 20*spacing))
             #print(events_db.fetchLunarEclipse(user_text))
-        elif events_db.fetchSolarEclipse(user_text) != []:
+        if events_db.fetchSolarEclipse(user_text) != []:
             solars = events_db.fetchSolarEclipse(user_text)
             for x in solars:
                 spacing = spacing+1
                 solar_text = x
-                events_surface = events_font.render(f"{solar_text}", True, WHITE)
-                screen.blit(events_surface, (10, 520 + 20*spacing))
+                event_button_rect = pygame.Rect(30, 375 + 35*spacing, 230, 30)
+                event_button_text = button_font.render(f"{solar_text}", True, WHITE)
+                event_button_text_rect = event_button_text.get_rect(center=event_button_rect.center)
+                pygame.draw.rect(screen, BLUE, event_button_rect)
+                screen.blit(event_button_text, event_button_text_rect)
+                #events_surface = events_font.render(f"{solar_text}", True, WHITE)
+                #screen.blit(events_surface, (10, 520 + 20*spacing))
             #print(events_db.fetchSolarEclipse(user_text))
-        elif events_db.fetchSpaceLaunch(user_text) != []:
+        if events_db.fetchSpaceLaunch(user_text) != []:
             launches = events_db.fetchSpaceLaunch(user_text)
             for x in launches:
                 spacing = spacing+1
                 launch_text = x
-                events_surface = events_font.render(f"{launch_text}", True, WHITE)
-                screen.blit(events_surface, (10, 520 + 20*spacing))
+                event_button_rect = pygame.Rect(30, 375 + 35*spacing, 300, 30)
+                event_button_text = button_font.render(f"{launch_text}", True, WHITE)
+                event_button_text_rect = event_button_text.get_rect(center=event_button_rect.center)
+                pygame.draw.rect(screen, BLUE, event_button_rect)
+                screen.blit(event_button_text, event_button_text_rect)
+                #events_surface = events_font.render(f"{launch_text}", True, WHITE)
+                #screen.blit(events_surface, (10, 520 + 20*spacing))
             #print(events_db.fetchSpaceLaunch(user_text))
 
     if wheel: 
@@ -788,32 +750,6 @@ while running:
             )
             pygame.draw.polygon(screen, WHITE, triangle, 1)
 
-            """
-        triangle0 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[0]), (zodiac_line_points[1]))
-        pygame.draw.polygon(screen, WHITE, triangle0, 1)
-        triangle1 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[1]), (zodiac_line_points[2]))
-        pygame.draw.polygon(screen, WHITE, triangle1, 1)
-        triangle2 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[2]), (zodiac_line_points[3]))
-        pygame.draw.polygon(screen, WHITE, triangle2, 1)
-        triangle3 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[3]), (zodiac_line_points[4]))
-        pygame.draw.polygon(screen, WHITE, triangle3, 1)
-        triangle4 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[4]), (zodiac_line_points[5]))
-        pygame.draw.polygon(screen, WHITE, triangle4, 1)
-        triangle5 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[5]), (zodiac_line_points[6]))
-        pygame.draw.polygon(screen, WHITE, triangle5, 1)
-        triangle6 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[6]), (zodiac_line_points[7]))
-        pygame.draw.polygon(screen, WHITE, triangle6, 1)
-        triangle7 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[7]), (zodiac_line_points[8]))
-        pygame.draw.polygon(screen, WHITE, triangle7, 1)
-        triangle8 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[8]), (zodiac_line_points[9]))
-        pygame.draw.polygon(screen, WHITE, triangle8, 1)
-        triangle9 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[9]), (zodiac_line_points[10]))
-        pygame.draw.polygon(screen, WHITE, triangle9, 1)
-        triangle10 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[10]), (zodiac_line_points[11]))
-        pygame.draw.polygon(screen, WHITE, triangle10, 1)
-        triangle11 = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[11]), (zodiac_line_points[0]))
-        pygame.draw.polygon(screen, WHITE, triangle11, 1)
-        """
         
         
         special_font = pygame.font.SysFont("Arial", 60)
@@ -823,20 +759,6 @@ while running:
        # screen.blit(text1_surface, (width // 2 - 100, height // 2 ))
         screen.blit(text1_surface, ((zodiac_line_points[current_sign_index][0] / zoom_scale, zodiac_line_points[current_sign_index][1] / zoom_scale)))
         
-        """
-        if current_sign_index > 0:
-            triangle = (
-                (scaled_sun_pos[0] / zoom_scale, scaled_sun_pos[1] / zoom_scale),
-                (zodiac_line_points[current_sign_index][0] / zoom_scale, zodiac_line_points[current_sign_index][1] / zoom_scale),
-                (zodiac_line_points[current_sign_index - 1][0] / zoom_scale, zodiac_line_points[current_sign_index - 1][1] / zoom_scale),
-            )
-            #triangle = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[current_sign_index]), (zodiac_line_points[current_sign_index - 1]))
-            pygame.draw.polygon(screen, RED, triangle, 2)
-            #pygame.draw.line(screen, TRANSPARENTBLUE, ( (int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[current_sign_index])))
-        else: 
-            triangle = ((int(scaled_sun_pos[0]), int(scaled_sun_pos[1])), (zodiac_line_points[current_sign_index]), (zodiac_line_points[current_sign_index - 1]))
-            pygame.draw.polygon(screen, RED, triangle, 2)
-            """
 
         triangle = (
             (scaled_sun_pos[0] / zoom_scale, scaled_sun_pos[1] / zoom_scale),

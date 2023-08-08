@@ -262,7 +262,7 @@ class Events():
 
     def fetchSpaceLaunch(self, params):
         self.dbcursor.execute(
-            "SELECT name, start_date, end_date, special_note "
+            "SELECT name, start_date, end_date "
             "FROM SPACE_LAUNCHES "
             "WHERE type LIKE ?", (f"%{params}",)
         )

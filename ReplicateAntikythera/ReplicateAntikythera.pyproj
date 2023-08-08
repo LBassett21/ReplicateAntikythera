@@ -28,6 +28,7 @@
     <Compile Include="OrbitalDynamics.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PygameGUITest.py" />
     <Compile Include="ReplicateAntikythera.py" />
     <Compile Include="Tests.py" />
   </ItemGroup>
