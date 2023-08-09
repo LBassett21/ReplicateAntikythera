@@ -82,7 +82,7 @@ current_time = pygame.display.set_mode((0,0),pygame.RESIZABLE)
 
 
 # Music
-pygame.mixer.music.load('Interstellar Main Theme - Hans Zimmer.mp3')
+pygame.mixer.music.load('[YT2mp3.info] - Interstellar Main Theme - Hans Zimmer (128kbps).mp3')
 pygame.mixer.music.play(loops=-1)
 
 # Set up the display
