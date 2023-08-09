@@ -80,6 +80,11 @@ formatted_time = current_time.strftime('%H:%M:%S')
 print(formatted_time)
 current_time = pygame.display.set_mode((0,0),pygame.RESIZABLE)
 
+
+# Music
+pygame.mixer.music.load('Interstellar Main Theme - Hans Zimmer.mp3')
+pygame.mixer.music.play(loops=-1)
+
 # Set up the display
 width, height = pygame.display.Info().current_w, pygame.display.Info().current_h #size of the display.
 screen = pygame.display.set_mode((0,0),pygame.RESIZABLE) #creating pygame screen with width and height
@@ -420,7 +425,14 @@ while running:
         if (time == 0):
             time_scale = time_scale_default
         else:
+
             time_scale = time_scale_default / time
+
+            time_scale = -4 - (3/5 * time)
+
+
+            time_scale = time_scale_default / time
+
 
         clock = pygame.time.Clock()
 
@@ -720,7 +732,8 @@ while running:
                 (zodiac_line_points[(i + 1) % 12][0] / zoom_scale, zodiac_line_points[(i + 1) % 12][1] / zoom_scale)
             )
             pygame.draw.polygon(screen, WHITE, triangle, 1)
-            
+
+
         special_font = pygame.font.SysFont("Arial", 60)
         text1_surface = special_font.render(f"{current_sign}", True, RED)
         
